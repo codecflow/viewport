@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viewport Visualizer</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="info">
+        <div id="status">Loading...</div>
+        <div id="stats"></div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module" src="/viewer.js"></script>
+</body>
+</html>
