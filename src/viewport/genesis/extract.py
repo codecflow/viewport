@@ -70,3 +70,26 @@ def transforms(scene, robot) -> tuple[np.ndarray, np.ndarray]:
         quaternions = quaternions.cpu().numpy()
     
     return positions.astype(np.float32), quaternions.astype(np.float32)
+
+
+def particles(entity) -> np.ndarray:
+    """Extract particle positions from Genesis entity.
+    
+    Args:
+        entity: Genesis entity with MPM/particle material
+        
+    Returns:
+        (M, 3) float32 array of particle positions
+    """
+    particles_3d = entity.get_particles()
+    
+    if len(particles_3d) == 0:
+        return np.array([], dtype=np.float32).reshape(0, 3)
+    
+    positions = particles_3d[0]
+    
+    # Convert to numpy if tensor
+    if hasattr(positions, 'cpu'):
+        positions = positions.cpu().numpy()
+    
+    return positions.astype(np.float32)

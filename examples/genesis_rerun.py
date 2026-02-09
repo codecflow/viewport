@@ -13,14 +13,19 @@ gs.init()
 scene = gs.Scene(
     sim_options=gs.options.SimOptions(dt=0.01, substeps=10),
     rigid_options=gs.options.RigidOptions(max_collision_pairs=500),
+    mpm_options=gs.options.MPMOptions(
+        lower_bound=(-1, -1, -0.1),
+        upper_bound=(1, 1, 1.5),
+        grid_density=32,
+    ),
     renderer=None,
     show_viewer=False,
 )
 
-# Add ground
+# Add ground with MPM coupling
 scene.add_entity(
     morph=gs.morphs.Plane(),
-    material=gs.materials.Rigid(),
+    material=gs.materials.Rigid(needs_coup=True, coup_friction=0.5),
 )
 
 # Add robot (Go2 quadruped - bundled with genesis-world)
@@ -29,7 +34,14 @@ robot = scene.add_entity(
         file="urdf/go2/urdf/go2.urdf",
         pos=(0, 0, 0.4),
     ),
-    material=gs.materials.Rigid(),
+    material=gs.materials.Rigid(needs_coup=True, coup_friction=0.8, coup_softness=0.0005),
+)
+
+# Add water cube falling above robot
+water = scene.add_entity(
+    material=gs.materials.MPM.Liquid(rho=1000.0, E=5e4, nu=0.2),
+    morph=gs.morphs.Box(pos=(0, 0, 0.9), size=(0.3, 0.3, 0.3)),
+    surface=gs.surfaces.Rough(color=(0.2, 0.6, 0.95, 0.8), vis_mode='particle'),
 )
 
 scene.build()
@@ -127,7 +139,7 @@ try:
         rr.set_time("frame", sequence=frame)
         rr.set_time("sim_time", duration=sim_time)
         
-        # Log transforms (quaternion: wxyz → xyzw for Rerun)
+        # Log robot transforms (quaternion: wxyz → xyzw for Rerun)
         for i, (name, _) in enumerate(mesh_data):
             pos = positions[i]
             quat_wxyz = quaternions[i]
@@ -138,6 +150,18 @@ try:
                 rr.Transform3D(
                     translation=pos,
                     quaternion=quat_xyzw,
+                ),
+            )
+        
+        # Log water particles
+        particle_pos = extract.particles(water)
+        if len(particle_pos) > 0:
+            rr.log(
+                "world/particles",
+                rr.Points3D(
+                    positions=particle_pos,
+                    colors=[51, 153, 242],
+                    radii=0.005,
                 ),
             )
         
