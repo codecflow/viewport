@@ -40,6 +40,17 @@ scene.add(mujocoRoot);
 const bodies = new Map();
 const loader = new GLTFLoader();
 
+// Particle system for water/MPM
+let particleSystem = null;
+let particleGeometry = null;
+const particleMaterial = new THREE.PointsMaterial({
+    color: 0x3399ff,
+    size: 0.03,
+    transparent: true,
+    opacity: 0.8,
+    sizeAttenuation: true,
+});
+
 // Fetch and load bodies
 async function loadBodies() {
     const response = await fetch('/bodies');
@@ -85,7 +96,10 @@ function connectWebSocket() {
         const buffer = new Float32Array(event.data);
         const nbody = bodies.size;
         
-        // buffer = [pos0.x, pos0.y, pos0.z, ..., quat0.w, quat0.x, quat0.y, quat0.z, ...]
+        // Expected size for transforms only: nbody*3 + nbody*4 = nbody*7
+        const transformSize = nbody * 7;
+        
+        // Update body transforms
         for (let i = 0; i < nbody; i++) {
             const mesh = bodies.get(i);
             if (!mesh) continue;
@@ -103,6 +117,32 @@ function connectWebSocket() {
             const qy = buffer[qOffset + 2];
             const qz = buffer[qOffset + 3];
             mesh.quaternion.set(qx, qy, qz, qw);
+        }
+        
+        // Check for particle data (everything after transforms)
+        if (buffer.length > transformSize) {
+            const particleCount = buffer.length - transformSize;
+            if (particleCount % 3 === 0) {
+                const numParticles = particleCount / 3;
+                const particlePositions = new Float32Array(particleCount);
+                
+                for (let i = 0; i < particleCount; i++) {
+                    particlePositions[i] = buffer[transformSize + i];
+                }
+                
+                // Update or create particle system
+                if (!particleSystem) {
+                    // Create new geometry and system
+                    particleGeometry = new THREE.BufferGeometry();
+                    particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+                    particleSystem = new THREE.Points(particleGeometry, particleMaterial);
+                    mujocoRoot.add(particleSystem);
+                    console.log(`Created particle system with ${numParticles} particles`);
+                } else {
+                    // Update existing geometry (recreate buffer attribute for dynamic count)
+                    particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+                }
+            }
         }
 
         // FPS counter
