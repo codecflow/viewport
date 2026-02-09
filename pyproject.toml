@@ -12,16 +12,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = [
-    "mypy>=1.19.1",
-    "pytest>=9.0.2",
-    "ruff>=0.15.0",
-]
-visualizer = [
-    "starlette>=0.45.0",
-    "uvicorn>=0.34.0",
-    "websockets>=16.0",
-]
+dev = ["mypy>=1.19.1", "pytest>=9.0.2", "ruff>=0.15.0"]
+visualizer = ["starlette>=0.45.0", "uvicorn>=0.34.0", "websockets>=16.0"]
+rerun = ["rerun-sdk>=0.29.1"]
 
 [build-system]
 requires = ["hatchling"]
@@ -45,8 +38,4 @@ select = ["E", "F", "I"]
 ignore = []
 
 [dependency-groups]
-dev = [
-    "mypy>=1.19.1",
-    "pytest>=9.0.2",
-    "ruff>=0.15.0",
-]
+dev = ["mypy>=1.19.1", "pytest>=9.0.2", "ruff>=0.15.0"]
