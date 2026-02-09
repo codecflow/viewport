@@ -72,13 +72,13 @@ class VisualizerServer:
         except Exception:
             pass
         finally:
-            self.clients.remove(websocket)
+            self.clients.discard(websocket)
     
-    def broadcast(self, data: bytes) -> None:
+    async def broadcast(self, data: bytes) -> None:
         """Broadcast transform data to all connected clients."""
         for client in list(self.clients):
             try:
-                asyncio.create_task(client.send_bytes(data))
+                await client.send_bytes(data)
             except Exception:
                 self.clients.discard(client)
     

@@ -1,6 +1,8 @@
 """Main Visualizer class for streaming MuJoCo simulations."""
 
 import asyncio
+import threading
+import time
 import webbrowser
 from pathlib import Path
 
@@ -34,7 +36,7 @@ class Visualizer:
         self.bodies = bodies
         self.port = port
         self.server: VisualizerServer | None = None
-        self._task: asyncio.Task | None = None
+        self._thread: threading.Thread | None = None
         self._loop: asyncio.AbstractEventLoop | None = None
     
     def open(self) -> None:
@@ -42,17 +44,28 @@ class Visualizer:
         static_dir = Path(__file__).parent / "static"
         self.server = VisualizerServer(self.bodies, static_dir, self.port)
         
-        # Start server in background
+        # Start server in background thread
         self._loop = asyncio.new_event_loop()
-        self._task = self._loop.create_task(self.server.start())
+        self._thread = threading.Thread(target=self._run_server, daemon=True)
+        self._thread.start()
         
-        # Run briefly to let server start
-        self._loop.run_until_complete(asyncio.sleep(0.5))
+        # Wait for server to start
+        time.sleep(0.5)
         
         # Open browser
         url = f"http://localhost:{self.port}"
         print(f"🌐 Visualizer running at {url}")
         webbrowser.open(url)
+    
+    def _run_server(self) -> None:
+        assert self.server is not None
+        assert self._loop is not None
+        asyncio.set_event_loop(self._loop)
+        try:
+            self._loop.run_until_complete(self.server.start())
+        except RuntimeError:
+            pass
+
     
     def update(self, data: mujoco.MjData) -> None:
         """Send transform update to browser.
@@ -60,7 +73,7 @@ class Visualizer:
         Args:
             data: MuJoCo data with current state
         """
-        if not self.server:
+        if not self.server or not self._loop:
             return
         
         # Extract xpos and xquat for all bodies
@@ -70,17 +83,16 @@ class Visualizer:
             data.xquat.flatten()  # All quaternions (wxyz)
         ]).astype(np.float32)
         
-        # Send via WebSocket
-        self.server.broadcast(transforms.tobytes())
-        
-        # Process events briefly
-        if self._loop:
-            self._loop.run_until_complete(asyncio.sleep(0.001))
+        # Schedule broadcast on server's event loop
+        asyncio.run_coroutine_threadsafe(
+            self.server.broadcast(transforms.tobytes()),
+            self._loop
+        )
     
     def close(self) -> None:
         """Stop server and cleanup."""
-        if self._task:
-            self._task.cancel()
         if self._loop:
-            self._loop.close()
+            self._loop.call_soon_threadsafe(self._loop.stop)
+        if self._thread:
+            self._thread.join(timeout=1.0)
         self.server = None

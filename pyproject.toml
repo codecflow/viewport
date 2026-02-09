@@ -20,6 +20,7 @@ dev = [
 visualizer = [
     "starlette>=0.45.0",
     "uvicorn>=0.34.0",
+    "websockets>=16.0",
 ]
 
 [build-system]
