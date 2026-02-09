@@ -4,7 +4,12 @@ version = "0.0.0"
 description = "Stream simulation meshes and state to browser viewers"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["numpy>=1.24.0,<2.4", "trimesh>=4.11.1"]
+dependencies = [
+    "matplotlib>=3.10.8",
+    "numpy>=1.24.0,<2.4",
+    "torch>=2.10.0",
+    "trimesh>=4.11.1",
+]
 
 [project.optional-dependencies]
 dev = ["mypy>=1.19.1", "pytest>=9.0.2", "ruff>=0.15.0"]
