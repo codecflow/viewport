@@ -31,6 +31,11 @@ scene.add(dirLight);
 const gridHelper = new THREE.GridHelper(10, 20, 0x444444, 0x222222);
 scene.add(gridHelper);
 
+// MuJoCo root: rotate -90° around X to convert Z-up to Y-up
+const mujocoRoot = new THREE.Group();
+mujocoRoot.rotation.x = -Math.PI / 2;
+scene.add(mujocoRoot);
+
 // Bodies storage
 const bodies = new Map();
 const loader = new GLTFLoader();
@@ -54,7 +59,7 @@ async function loadBodies() {
                 }
             });
             
-            scene.add(mesh);
+            mujocoRoot.add(mesh);
             bodies.set(bodyInfo.id, mesh);
             
             console.log(`Loaded body ${bodyInfo.id}: ${bodyInfo.name}`);
@@ -85,13 +90,13 @@ function connectWebSocket() {
             const mesh = bodies.get(i);
             if (!mesh) continue;
 
-            // Position
+            // Position (MuJoCo coordinates directly)
             const px = buffer[i * 3];
             const py = buffer[i * 3 + 1];
             const pz = buffer[i * 3 + 2];
             mesh.position.set(px, py, pz);
 
-            // Quaternion (MuJoCo uses wxyz, Three.js uses xyzw)
+            // Quaternion (MuJoCo wxyz → Three.js xyzw)
             const qOffset = nbody * 3 + i * 4;
             const qw = buffer[qOffset];
             const qx = buffer[qOffset + 1];
