@@ -149,8 +149,8 @@ function buildScene() {
         }
         
         // Create geometry
-        const geometry = createGeometry(mujoco, type, size);
-        const material = createMaterial(model, g);
+        const geometry = createGeometry(mujoco, type, size, g);
+        const material = createMaterial(mujoco, model, g);
         
         let mesh;
         if (type === 0) {
@@ -190,8 +190,11 @@ function buildScene() {
     console.log('Scene built');
 }
 
+// Mesh cache
+const meshes = {};
+
 // Create geometry from MuJoCo type
-function createGeometry(mujoco, type, size) {
+function createGeometry(mujoco, type, size, geomIndex) {
     if (type === mujoco.mjtGeom.mjGEOM_SPHERE.value) {
         return new THREE.SphereGeometry(size[0], 20, 20);
     } else if (type === mujoco.mjtGeom.mjGEOM_CAPSULE.value) {
@@ -200,27 +203,213 @@ function createGeometry(mujoco, type, size) {
         return new THREE.CylinderGeometry(size[0], size[0], size[1] * 2, 20);
     } else if (type === mujoco.mjtGeom.mjGEOM_BOX.value) {
         return new THREE.BoxGeometry(size[0] * 2, size[2] * 2, size[1] * 2);
+    } else if (type === mujoco.mjtGeom.mjGEOM_MESH.value) {
+        const meshID = model.geom_dataid[geomIndex];
+        
+        if (!(meshID in meshes)) {
+            const geometry = new THREE.BufferGeometry();
+            
+            // Extract vertex data
+            const vertexBuffer = model.mesh_vert.subarray(
+                model.mesh_vertadr[meshID] * 3,
+                (model.mesh_vertadr[meshID] + model.mesh_vertnum[meshID]) * 3
+            );
+            // Swizzle Y/Z coordinates
+            for (let v = 0; v < vertexBuffer.length; v += 3) {
+                const temp = vertexBuffer[v + 1];
+                vertexBuffer[v + 1] = vertexBuffer[v + 2];
+                vertexBuffer[v + 2] = -temp;
+            }
+            
+            // Extract normal data
+            const normalBuffer = model.mesh_normal.subarray(
+                model.mesh_normaladr[meshID] * 3,
+                (model.mesh_normaladr[meshID] + model.mesh_normalnum[meshID]) * 3
+            );
+            // Swizzle normals
+            for (let v = 0; v < normalBuffer.length; v += 3) {
+                const temp = normalBuffer[v + 1];
+                normalBuffer[v + 1] = normalBuffer[v + 2];
+                normalBuffer[v + 2] = -temp;
+            }
+            
+            // Extract UV data
+            const uvBuffer = model.mesh_texcoord.subarray(
+                model.mesh_texcoordadr[meshID] * 2,
+                (model.mesh_texcoordadr[meshID] + model.mesh_texcoordnum[meshID]) * 2
+            );
+            
+            // Extract face indices
+            const triangleBuffer = model.mesh_face.subarray(
+                model.mesh_faceadr[meshID] * 3,
+                (model.mesh_faceadr[meshID] + model.mesh_facenum[meshID]) * 3
+            );
+            
+            // Build indexed geometry with proper UV/normal mapping
+            const positions = [];
+            const normals = [];
+            const uvs = [];
+            const indices = [];
+            const tupleToIndex = new Map();
+            
+            const faceToUvBuffer = model.mesh_facetexcoord?.subarray(
+                model.mesh_faceadr[meshID] * 3,
+                (model.mesh_faceadr[meshID] + model.mesh_facenum[meshID]) * 3
+            );
+            const faceToNormalBuffer = model.mesh_facenormal?.subarray(
+                model.mesh_faceadr[meshID] * 3,
+                (model.mesh_faceadr[meshID] + model.mesh_facenum[meshID]) * 3
+            );
+            
+            const faceCount = triangleBuffer.length / 3;
+            for (let t = 0; t < faceCount; t++) {
+                for (let c = 0; c < 3; c++) {
+                    const vi = triangleBuffer[t * 3 + c];
+                    const nvi = faceToNormalBuffer ? faceToNormalBuffer[t * 3 + c] : vi;
+                    const uvi = faceToUvBuffer ? faceToUvBuffer[t * 3 + c] : vi;
+                    const key = `${vi}_${nvi}_${uvi}`;
+                    
+                    let outIndex = tupleToIndex.get(key);
+                    if (outIndex === undefined) {
+                        outIndex = positions.length / 3;
+                        tupleToIndex.set(key, outIndex);
+                        
+                        positions.push(
+                            vertexBuffer[vi * 3 + 0],
+                            vertexBuffer[vi * 3 + 1],
+                            vertexBuffer[vi * 3 + 2]
+                        );
+                        normals.push(
+                            normalBuffer[nvi * 3 + 0],
+                            normalBuffer[nvi * 3 + 1],
+                            normalBuffer[nvi * 3 + 2]
+                        );
+                        if (uvBuffer.length > 0) {
+                            uvs.push(uvBuffer[uvi * 2 + 0], uvBuffer[uvi * 2 + 1]);
+                        }
+                    }
+                    indices.push(outIndex);
+                }
+            }
+            
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+            if (uvs.length > 0) {
+                geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+            }
+            geometry.setIndex(indices);
+            
+            meshes[meshID] = geometry;
+        }
+        
+        return meshes[meshID];
     }
     
     return new THREE.SphereGeometry(size[0]);
 }
 
+// Texture cache
+const textures = {};
+
+// Create texture from model data
+function createTexture(mujoco, model, texId) {
+    if (texId in textures) {
+        return textures[texId];
+    }
+    
+    const width = model.tex_width[texId];
+    const height = model.tex_height[texId];
+    const offset = model.tex_adr[texId];
+    const channels = model.tex_nchannel[texId];
+    
+    // Convert to RGBA
+    const rgbaArray = new Uint8Array(width * height * 4);
+    for (let p = 0; p < width * height; p++) {
+        rgbaArray[p * 4 + 0] = model.tex_data[offset + p * channels + 0]; // R
+        rgbaArray[p * 4 + 1] = channels > 1 ? model.tex_data[offset + p * channels + 1] : rgbaArray[p * 4 + 0]; // G
+        rgbaArray[p * 4 + 2] = channels > 2 ? model.tex_data[offset + p * channels + 2] : rgbaArray[p * 4 + 0]; // B
+        rgbaArray[p * 4 + 3] = channels > 3 ? model.tex_data[offset + p * channels + 3] : 255; // A
+    }
+    
+    const texture = new THREE.DataTexture(
+        rgbaArray,
+        width,
+        height,
+        THREE.RGBAFormat,
+        THREE.UnsignedByteType
+    );
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.needsUpdate = true;
+    
+    textures[texId] = texture;
+    return texture;
+}
+
 // Create material
-function createMaterial(model, geomIndex) {
-    const color = [
+function createMaterial(mujoco, model, geomIndex) {
+    let color = [
         model.geom_rgba[geomIndex * 4 + 0],
         model.geom_rgba[geomIndex * 4 + 1],
         model.geom_rgba[geomIndex * 4 + 2],
         model.geom_rgba[geomIndex * 4 + 3]
     ];
     
-    return new THREE.MeshPhysicalMaterial({
+    let texture = null;
+    let texRepeat = [1, 1];
+    
+    // Check if geom has material
+    if (model.geom_matid[geomIndex] !== -1) {
+        const matId = model.geom_matid[geomIndex];
+        
+        // Use material RGBA
+        color = [
+            model.mat_rgba[matId * 4 + 0],
+            model.mat_rgba[matId * 4 + 1],
+            model.mat_rgba[matId * 4 + 2],
+            model.mat_rgba[matId * 4 + 3]
+        ];
+        
+        // Check for texture
+        if (model.mat_texid && model.ntex > 0) {
+            const mjNTEXROLE = 10;
+            const mjTEXROLE_RGB = 1;
+            const texId = model.mat_texid[matId * mjNTEXROLE + mjTEXROLE_RGB];
+            
+            if (texId !== -1) {
+                texture = createTexture(mujoco, model, texId);
+                
+                if (model.mat_texrepeat) {
+                    texRepeat = [
+                        model.mat_texrepeat[matId * 2 + 0],
+                        model.mat_texrepeat[matId * 2 + 1]
+                    ];
+                }
+            }
+        }
+    }
+    
+    // PBR material properties based on color
+    const isDark = color[0] < 0.3 && color[1] < 0.3 && color[2] < 0.3;
+    const isLight = color[0] > 0.6 || color[1] > 0.6 || color[2] > 0.6;
+    
+    const material = new THREE.MeshPhysicalMaterial({
         color: new THREE.Color(color[0], color[1], color[2]),
         transparent: color[3] < 1.0,
         opacity: color[3],
-        metalness: 0.3,
-        roughness: 0.6,
+        metalness: isDark ? 0.8 : 0.3,
+        roughness: isDark ? 0.4 : 0.6,
+        clearcoat: isLight ? 0.3 : 0.0,
+        clearcoatRoughness: 0.4,
     });
+    
+    if (texture) {
+        material.map = texture;
+        texture.repeat.set(texRepeat[0], texRepeat[1]);
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+    }
+    
+    return material;
 }
 
 // Get position with coordinate swizzle (Z-up to Y-up)
