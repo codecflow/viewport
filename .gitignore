@@ -10,3 +10,6 @@ wheels/
 reference
 
 .env
+
+# Exported WASM sites
+examples/dist/
