@@ -1,0 +1,54 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_call:
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: ghcr.io/${{ github.repository }}:ci
+
+    steps:
+    - uses: actions/checkout@v5
+
+    - name: Set up UV
+      uses: astral-sh/setup-uv@v6
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    # - name: Cache VirtualEnv
+    #   id: venv
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: .venv
+    #     key: venv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+
+    - name: Install Dependencies
+      if: steps.venv.outputs.cache-hit != 'true'
+      run: uv sync --all-extras --all-groups --frozen
+
+    - name: Cache PyTest
+      uses: actions/cache@v4
+      with:
+        path: .pytest_cache
+        key: pytestcache-${{ runner.os }}-${{ github.ref }}
+        restore-keys: |
+          pytestcache-${{ runner.os }}-
+
+    - name: Run Tests
+      run: uv run pytest -m "not benchmark"

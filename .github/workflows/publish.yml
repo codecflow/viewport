@@ -1,0 +1,41 @@
+name: Publish
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  actions: read
+  packages: read
+
+jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+
+  test:
+    uses: ./.github/workflows/test.yml
+
+  publish:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ghcr.io/${{ github.repository }}:ci
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Set up UV
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Build Package
+        run: uv build
+
+      - name: Publish to PyPI
+        run: uv publish --token ${{ secrets.PYPI_PUBLISH_TOKEN }}
