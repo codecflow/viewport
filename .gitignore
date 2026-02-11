@@ -4,12 +4,13 @@ build/
 dist/
 wheels/
 *.egg-info
-.mypy_cache
-
 .venv
+.ruff_cache
+.pytest_cache
+.mypy_cache
+.benchmarks
 reference
 
 .env
 
-# Exported WASM sites
 examples/dist/

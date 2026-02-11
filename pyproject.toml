@@ -1,54 +1,80 @@
 [project]
 name = "viewport"
-version = "0.0.0"
+version = "0.0.0a1"
 description = "Stream simulation meshes and state to browser viewers"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = [
-    "matplotlib>=3.10.8",
-    "numpy>=1.24.0,<2.4",
-    "torch>=2.10.0",
-    "trimesh>=4.11.1",
+authors = [{ name = "CodecFlow Team", email = "team@codecflow.ai" }]
+keywords = [
+    "robotics",
+    "simulation",
+    "mujoco",
+    "genesis",
+    "newton",
+    "3d",
+    "visualization",
+    "rerun",
+    "browser",
 ]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+license = { text = "MIT" }
+dependencies = ["numpy>=1.24.0,<2.4", "trimesh>=4.11.1"]
+
+[project.urls]
+Repository = "https://github.com/codecflow/viewport"
+Issues = "https://github.com/codecflow/viewport/issues"
 
 [project.optional-dependencies]
-dev = ["mypy>=1.19.1", "pytest>=9.0.2", "ruff>=0.15.0"]
-visualizer = ["starlette>=0.45.0", "uvicorn>=0.34.0", "websockets>=16.0"]
-rerun = ["rerun-sdk>=0.29.1"]
+
 
 [dependency-groups]
+dev = ["mypy", "pytest", "pytest-benchmark", "types-psutil", "ruff", "taskipy"]
 mujoco = ["mujoco>=3.2.5", "pillow>=11.0"]
-genesis = ["genesis-world", "mujoco>=3.2.5", "pillow>11.0"]
+genesis = [
+    "genesis-world",
+    "matplotlib>=3.10.8",
+    "mujoco>=3.2.5",
+    "pillow>=11.0",
+    "torch>=2.10.0",
+]
 newton = [
     "gitpython>=3.1.46",
     "mujoco-warp>=0.0.2",
     "newton>=0.1.3",
     "warp>=1.0.4",
 ]
+visualizer = ["starlette>=0.45.0", "uvicorn>=0.34.0", "websockets>=16.0"]
+rerun = ["rerun-sdk>=0.29.1"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build]
+only-include = ["src/viewport", "README.md"]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/viewport"]
-
-[tool.mypy]
-python_version = "3.11"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = false
-
-[tool.ruff]
-line-length = 100
-target-version = "py311"
-
-[tool.ruff.lint]
-select = ["E", "F", "I"]
-ignore = []
 
 [tool.uv]
 override-dependencies = ["numba>=0.60"]
 
 [tool.uv.sources]
 genesis-world = { git = "https://github.com/Genesis-Embodied-AI/Genesis", rev = "5a8928a5e1b3d9e668bb2381ded44ef64357afb2" }
+
+[tool.taskipy.tasks]
+format = "ruff format"
+check = "ruff check"
+typing = "mypy"
+test = "pytest -m 'not benchmark'"
+bench = "pytest --benchmark-only"
+clean = "rm -rf .ruff_cache .mypy_cache .pytest_cache .benchmarks dist"

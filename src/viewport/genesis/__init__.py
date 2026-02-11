@@ -1,6 +1,6 @@
 """Genesis simulation extraction utilities."""
 
-from .extract import meshes, transforms, particles
 from . import glb
+from .extract import meshes, particles, transforms
 
 __all__ = ["meshes", "transforms", "particles", "glb"]

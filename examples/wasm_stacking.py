@@ -1,7 +1,9 @@
 """Export stacking scene to static WASM site."""
 
 from pathlib import Path
+
 import mujoco
+
 from viewport.mujoco import wasm
 
 # Load model
