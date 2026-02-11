@@ -34,10 +34,6 @@ Repository = "https://github.com/codecflow/viewport"
 Issues = "https://github.com/codecflow/viewport/issues"
 
 [project.optional-dependencies]
-
-
-[dependency-groups]
-dev = ["mypy", "pytest", "pytest-benchmark", "types-psutil", "ruff", "taskipy"]
 mujoco = ["mujoco>=3.2.5", "pillow>=11.0"]
 genesis = [
     "genesis-world",
@@ -54,6 +50,9 @@ newton = [
 ]
 visualizer = ["starlette>=0.45.0", "uvicorn>=0.34.0", "websockets>=16.0"]
 rerun = ["rerun-sdk>=0.29.1"]
+
+[dependency-groups]
+dev = ["mypy", "pytest", "pytest-benchmark", "types-psutil", "ruff", "taskipy"]
 
 [build-system]
 requires = ["hatchling"]

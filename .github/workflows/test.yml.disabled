@@ -1,4 +1,4 @@
-name: Lint
+name: Test
 
 on:
   push:
@@ -16,9 +16,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     container:
       image: ghcr.io/${{ github.repository }}:ci
 
@@ -40,23 +40,15 @@ jobs:
 
     - name: Install Dependencies
       if: steps.venv.outputs.cache-hit != 'true'
-      run: uv sync --all-extras --all-groups --frozen
+      run: uv sync --group dev --frozen
 
-    - name: Cache Analyzer
+    - name: Cache PyTest
       uses: actions/cache@v4
       with:
-        path: |
-          .mypy_cache
-          .ruff_cache
-        key: lintcache-${{ runner.os }}-${{ github.ref }}
+        path: .pytest_cache
+        key: pytestcache-${{ runner.os }}-${{ github.ref }}
         restore-keys: |
-          lintcache-${{ runner.os }}-
+          pytestcache-${{ runner.os }}-
 
-    - name: Check Formatting
-      run: uv run ruff format --check
-
-    - name: Run Linter
-      run: uv run ruff check --output-format=github
-
-    - name: Run Type Checker
-      run: uv run mypy src
+    - name: Run Tests
+      run: uv run pytest -m "not benchmark"
