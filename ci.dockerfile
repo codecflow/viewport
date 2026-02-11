@@ -15,3 +15,6 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 ENV MUJOCO_GL=egl
 
 WORKDIR /workspace
+
+COPY pyproject.toml uv.lock ./
+RUN uv sync --all-extras --all-groups --frozen --no-install-project
