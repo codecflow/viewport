@@ -1,0 +1,63 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #app { width: 100%; height: 100%; overflow: hidden; background: #111; color: #ccc; font: 13px/1.5 system-ui, sans-serif; }
+
+#app { display: flex; flex-direction: column; }
+
+/* ── header ── */
+#bar {
+  display: flex; align-items: center; gap: 12px;
+  height: 36px; padding: 0 12px;
+  background: #1a1a1a; border-bottom: 1px solid #2a2a2a;
+  flex-shrink: 0;
+}
+
+#scene-name { font-weight: 600; color: #eee; }
+
+#status { font-size: 11px; color: #666; margin-left: auto; }
+
+#open-label {
+  padding: 3px 10px; background: #2a2a2a; border-radius: 4px;
+  cursor: pointer; font-size: 12px; color: #aaa;
+}
+#open-label:hover { background: #333; color: #eee; }
+
+/* ── main ── */
+#main { display: flex; flex: 1; overflow: hidden; }
+
+/* ── sidebar ── */
+#sidebar {
+  width: 220px; flex-shrink: 0;
+  background: #161616; border-right: 1px solid #222;
+  overflow-y: auto;
+}
+
+#tree { padding: 6px 0; }
+
+.tree-item {
+  display: flex; align-items: center;
+  padding: 3px 8px; cursor: pointer;
+  border-radius: 3px; margin: 1px 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 12px; color: #999;
+}
+.tree-item:hover { background: #222; color: #eee; }
+.tree-item.active { background: #1e3a5f; color: #7bb3f0; }
+.tree-item .icon { margin-right: 5px; font-size: 10px; opacity: 0.5; }
+.tree-item .name { overflow: hidden; text-overflow: ellipsis; }
+
+/* ── viewport ── */
+#viewport { flex: 1; position: relative; overflow: hidden; }
+
+#canvas { width: 100%; height: 100%; display: block; }
+
+/* ── drag overlay ── */
+#drag-overlay {
+  display: none; position: absolute; inset: 0;
+  background: rgba(30, 90, 160, 0.3);
+  border: 2px dashed #5b9bd5;
+  align-items: center; justify-content: center;
+  font-size: 18px; color: #5b9bd5;
+  pointer-events: none;
+}
+#drag-overlay.active { display: flex; }

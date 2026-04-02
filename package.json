@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun run --filter @simarena/viewport test",
+    "preview": "bun run --filter @simarena/preview dev"
+  },
+  "workspaces": ["client", "preview"]
+}

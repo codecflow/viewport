@@ -1,0 +1,126 @@
+<mujoco model="cloi_porter">
+  <compiler angle="radian" meshdir="meshes" autolimits="true"/>
+  <option timestep="0.005" solver="Newton" gravity="0 0 -9.81"/>
+
+  <default>
+    <default class="cloi_porter">
+      <geom friction="0.85 0.001 0.001"/>
+    </default>
+    <default class="caster">
+      <joint type="hinge" axis="0 0 1" damping="0.5" frictionloss="0.3"/>
+    </default>
+  </default>
+
+  <asset>
+    <!-- Visual mesh (OBJ + MTL + textures — loaded by Three.js renderer) -->
+    <mesh name="body_visual"  file="CLOi_porter.obj"/>
+    <!-- Collision meshes (STL — used by MuJoCo physics, invisible in viewer) -->
+    <mesh name="main_body"    file="main_body_collision.stl"/>
+    <mesh name="cart"         file="cart_collision.stl"/>
+    <mesh name="neck"         file="neck_collision.stl"/>
+    <mesh name="head"         file="head_collision.stl"/>
+    <mesh name="porter_wheel" file="porter_wheel.stl"/>
+    <mesh name="caster_hinge" file="caster_hinge.stl"/>
+    <mesh name="caster_wheel" file="caster_wheel.stl"/>
+  </asset>
+
+  <worldbody>
+    <!--
+      Main body spawned at z=0.2 so wheels (~0.1m radius) clear the ground.
+      Inertial centroid is 0.25m above the body origin (per SDF).
+    -->
+    <body name="link_MainBody" pos="0 0 0.2">
+      <freejoint/>
+      <inertial pos="0 0 0.25" mass="59" fullinertia="0.7 0.7 2 0 0 0"/>
+
+      <!-- Visual mesh: OBJ with MTL textures, no physics -->
+      <geom name="vis_body" type="mesh" mesh="body_visual" contype="0" conaffinity="0"/>
+      <!-- Collision meshes: invisible, physics only -->
+      <geom name="col_main_body" type="mesh" mesh="main_body" class="cloi_porter" rgba="0 0 0 0"/>
+      <geom name="col_cart"      type="mesh" mesh="cart"      class="cloi_porter" rgba="0 0 0 0"/>
+      <geom name="col_neck"      type="mesh" mesh="neck"      class="cloi_porter" rgba="0 0 0 0"/>
+      <geom name="col_head"      type="mesh" mesh="head"      class="cloi_porter" rgba="0 0 0 0"/>
+
+      <!-- ═══════════════════════════════════════════════════════
+           Left drivetrain: suspension (prismatic Z) + drive wheel
+           SDF: SuspensionLeft at (0, 0.158, 0.09) from MainBody
+                wheel_left    at (0.001, 0.225, 0.08) from MainBody
+                  → relative to suspension: (0.001, 0.067, -0.01)
+                  → rotated -π/2 around X (wheel upright, axis along Y)
+           ═══════════════════════════════════════════════════════ -->
+      <body name="SuspensionLeft" pos="0 0.158 0.09">
+        <joint name="susp_left" type="slide" axis="0 0 1"
+               range="0 0.04" damping="320" stiffness="8200" frictionloss="0.1"/>
+        <inertial pos="0 0 0" mass="0.5" diaginertia="0.001 0.001 0.001"/>
+
+        <body name="wheel_left" pos="0.001 0.067 -0.01" euler="-1.5707963 0 0">
+          <!-- axis "0 1 0" = Y in parent (SuspensionLeft) frame = lateral spin axis -->
+          <joint name="wheel_left" type="hinge" axis="0 1 0"
+                 damping="12" frictionloss="0.001"/>
+          <inertial pos="0 0 0" mass="1.5" diaginertia="0.00217 0.00217 0.004"/>
+          <geom name="wheel_left_vis" type="mesh"     mesh="porter_wheel" contype="0" conaffinity="0"/>
+          <geom name="wheel_left_col" type="cylinder" size="0.1 0.035" class="cloi_porter" friction="0.85 0.5 0.01"/>
+        </body>
+      </body>
+
+      <!-- ═══════════════════════════════════════════════════════
+           Right drivetrain
+           SDF: SuspensionRight at (0, -0.158, 0.09)
+                wheel_right    at (0.001, -0.225, 0.08) → relative (0.001, -0.067, -0.01)
+                  → rotated +π/2 around X
+           ═══════════════════════════════════════════════════════ -->
+      <body name="SuspensionRight" pos="0 -0.158 0.09">
+        <joint name="susp_right" type="slide" axis="0 0 1"
+               range="0 0.04" damping="320" stiffness="8200" frictionloss="0.1"/>
+        <inertial pos="0 0 0" mass="0.5" diaginertia="0.001 0.001 0.001"/>
+
+        <body name="wheel_right" pos="0.001 -0.067 -0.01" euler="1.5707963 0 0">
+          <joint name="wheel_right" type="hinge" axis="0 1 0"
+                 damping="12" frictionloss="0.001"/>
+          <inertial pos="0 0 0" mass="1.5" diaginertia="0.00217 0.00217 0.004"/>
+          <geom name="wheel_right_vis" type="mesh"     mesh="porter_wheel" contype="0" conaffinity="0"/>
+          <geom name="wheel_right_col" type="cylinder" size="0.1 0.035" class="cloi_porter" friction="0.85 0.5 0.01"/>
+        </body>
+      </body>
+
+      <!-- ═══════════════════════════════════════════════════════
+           Casters (4×): revolute yaw joint + sphere contact
+           SDF poses from MainBody: FL(0.22, 0.1, 0.066) etc.
+           Sphere offset -0.04 in Z to approximate caster wheel ground contact.
+           ═══════════════════════════════════════════════════════ -->
+      <body name="FL_caster" pos="0.22 0.1 0.066">
+        <joint name="FL_caster_yaw" class="caster"/>
+        <inertial pos="0 0 0" mass="0.5" diaginertia="0.001 0.001 0.001"/>
+        <geom name="FL_caster_vis" type="mesh"   mesh="caster_hinge" contype="0" conaffinity="0"/>
+        <geom name="FL_caster_col" type="sphere" size="0.04" pos="0 0 -0.04" class="cloi_porter"/>
+      </body>
+
+      <body name="FR_caster" pos="0.22 -0.1 0.066">
+        <joint name="FR_caster_yaw" class="caster"/>
+        <inertial pos="0 0 0" mass="0.5" diaginertia="0.001 0.001 0.001"/>
+        <geom name="FR_caster_vis" type="mesh"   mesh="caster_hinge" contype="0" conaffinity="0"/>
+        <geom name="FR_caster_col" type="sphere" size="0.04" pos="0 0 -0.04" class="cloi_porter"/>
+      </body>
+
+      <body name="RL_caster" pos="-0.22 0.1 0.066">
+        <joint name="RL_caster_yaw" class="caster"/>
+        <inertial pos="0 0 0" mass="0.5" diaginertia="0.001 0.001 0.001"/>
+        <geom name="RL_caster_vis" type="mesh"   mesh="caster_hinge" contype="0" conaffinity="0"/>
+        <geom name="RL_caster_col" type="sphere" size="0.04" pos="0 0 -0.04" class="cloi_porter"/>
+      </body>
+
+      <body name="RR_caster" pos="-0.22 -0.1 0.066">
+        <joint name="RR_caster_yaw" class="caster"/>
+        <inertial pos="0 0 0" mass="0.5" diaginertia="0.001 0.001 0.001"/>
+        <geom name="RR_caster_vis" type="mesh"   mesh="caster_hinge" contype="0" conaffinity="0"/>
+        <geom name="RR_caster_col" type="sphere" size="0.04" pos="0 0 -0.04" class="cloi_porter"/>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <!-- Differential drive: cmd_vel → (left, right) motor velocities -->
+    <motor name="wheel_left"  joint="wheel_left"  ctrlrange="-50 50"/>
+    <motor name="wheel_right" joint="wheel_right" ctrlrange="-50 50"/>
+  </actuator>
+</mujoco>

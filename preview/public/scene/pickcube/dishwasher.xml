@@ -1,0 +1,83 @@
+<!-- Dishwasher — self-contained MuJoCo asset
+     Source: furniture_sim by Vikash Kumar (Apache 2.0)
+     Adapted for SimArena (collision geoms use group=0 so buildScene renders them)
+
+     Joints:
+     - "door"     : hinge, axis X, range -1.5 to 0 (opens toward viewer)
+     - "top_rack" : slide, axis Y, range 0 to 0.274 (pulls out)
+-->
+<mujoco model="dishwasher">
+  <compiler angle="radian" meshdir="assets"/>
+
+  <asset>
+    <material name="M_dishwasher" rgba="0.75 0.75 0.78 1" shininess="0.6" specular="0.8"/>
+    <material name="M_dishwasher_dark" rgba="0.15 0.15 0.18 1" shininess="0.3" specular="0.4"/>
+    <mesh name="ktc_dishwasher" file="ktc_dishwasher.stl"/>
+    <mesh name="ktc_dishwasher_rack" file="ktc_dishwasher_rack.stl"/>
+    <mesh name="ktc_dishwasher_door" file="ktc_dishwasher_door.stl"/>
+  </asset>
+
+  <default>
+    <default class="dishwasher">
+      <joint damping="0.5" frictionloss="0.3" armature="0.01" limited="true"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <body name="dishwasher" pos="0 0 0" childclass="dishwasher">
+      <!-- Main body visual mesh (group=0 → rendered) -->
+      <geom type="mesh" mesh="ktc_dishwasher" euler="1.57 0 0" material="M_dishwasher"
+            group="0" contype="0" conaffinity="0"/>
+      <!-- Collision boxes (group=3 → physics only) -->
+      <geom type="box" pos="0 0.312 .756" size=".290 .310 .031" group="3"
+            rgba=".4 .5 .6 1" contype="1" conaffinity="0"/>
+      <geom type="box" pos="0 0.312 .055" size=".290 .310 .055" group="3"
+            rgba=".4 .5 .6 1" contype="1" conaffinity="0"/>
+      <geom type="box" pos="0.26 0.312 .378" size=".031 .310 .378" group="3"
+            rgba=".4 .5 .6 1" contype="1" conaffinity="0"/>
+      <geom type="box" pos="-.26 0.312 .378" size=".031 .310 .378" group="3"
+            rgba=".4 .5 .6 1" contype="1" conaffinity="0"/>
+      <geom type="box" pos="0 0.071 .378" size=".290 .0710 .378" group="3"
+            rgba=".4 .5 .6 1" contype="1" conaffinity="0"/>
+
+      <!-- Top rack — slides on Y axis (depth direction) -->
+      <body name="top_rack" pos="0 0.375 0.485">
+        <inertial pos="0 0 0" mass="2" diaginertia="0.1 0.1 0.1"/>
+        <joint name="top_rack" pos="0 0 0" axis="0 1 0" type="slide"
+               limited="true" range="0 0.274" damping="0.01" frictionloss="0.01"/>
+        <geom type="mesh" mesh="ktc_dishwasher_rack" euler="1.57 0 0"
+              material="M_dishwasher" group="0" contype="0" conaffinity="0"/>
+      </body>
+
+      <!-- Door — hinge on X axis, opens downward (range -1.5 to 0) -->
+      <body name="door" pos="0 .622 0.05">
+        <inertial pos="0 0 0" mass="2" diaginertia="0.1 0.1 0.1"/>
+        <joint name="door" axis="1 0 0" limited="true" range="-1.5 0"
+               damping="0.5" frictionloss="0.3"/>
+        <!-- Visual door mesh -->
+        <geom type="mesh" mesh="ktc_dishwasher_door" mass="2" euler="1.57 0 0"
+              material="M_dishwasher" group="0" contype="0" conaffinity="0"/>
+        <!-- Door panel (dark face) -->
+        <geom type="box" pos="0 0.025 .37" size=".290 .010 .365"
+              material="M_dishwasher_dark" group="0" contype="0" conaffinity="0"/>
+        <!-- Handle (Y-axis capsule) -->
+        <geom type="capsule" pos="0 0.08 .625" size=".020 .260" euler="0 1.57 0"
+              material="M_dishwasher_dark" group="0" contype="0" conaffinity="0"/>
+        <!-- Handle ends -->
+        <geom type="capsule" pos="0.26 0.06 .625" size=".020 .020" euler="1.57 0 0"
+              material="M_dishwasher_dark" group="0" contype="0" conaffinity="0"/>
+        <geom type="capsule" pos="-.26 0.06 .625" size=".020 .020" euler="1.57 0 0"
+              material="M_dishwasher_dark" group="0" contype="0" conaffinity="0"/>
+        <!-- Door collision -->
+        <geom type="box" pos="0 0.013 .37" size=".290 .0210 .365" group="3"
+              rgba=".4 .5 .6 1" contype="1" conaffinity="0"/>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <!-- Position-controlled door and rack for keyboard teleop -->
+    <position name="door_ctrl" joint="door" ctrlrange="-1.5 0" kp="20"/>
+    <position name="rack_ctrl" joint="top_rack" ctrlrange="0 0.274" kp="20"/>
+  </actuator>
+</mujoco>

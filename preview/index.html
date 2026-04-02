@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scene Viewer</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header id="bar">
+      <span id="scene-name">Scene Viewer</span>
+      <span id="status">drop a .scene.json or use ?url=</span>
+      <label id="open-label">
+        Open
+        <input type="file" id="file-input" accept=".json" style="display:none" />
+      </label>
+    </header>
+    <div id="main">
+      <aside id="sidebar">
+        <div id="tree"></div>
+      </aside>
+      <div id="viewport">
+        <canvas id="canvas"></canvas>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

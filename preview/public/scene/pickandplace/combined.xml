@@ -1,0 +1,45 @@
+<mujoco model="robot_with_bins">
+  <compiler angle="radian" meshdir="meshes" texturedir="textures" autolimits="true" />
+  
+  <include file="robot.xml"/>
+  
+  <worldbody>
+    <geom condim="3" group="1" name="floor" pos="0 0 0" size="3 3 .125" type="plane" conaffinity="15" contype="1" rgba="0.7 0.7 0.7 1"/>
+    
+    <!-- bins from pick_place_scene.xml -->
+    <body name="bin1" pos="0.1 -0.25 0.8">
+        <geom pos="0 0 0" size="0.2 0.275 0.02" type="box" group="0" friction="1 0.005 0.0001" conaffinity="15" contype="2" rgba="0.8 0.6 0.4 1"/>
+        <geom pos="0 0 -0.03" size="0.2 0.275 0.01" type="box" group="0" friction="1 0.005 0.0001" conaffinity="15" contype="2" rgba="0.8 0.6 0.4 1"/>
+        <!-- Table walls -->
+        <geom pos="0 0.275 0.05" size="0.21 0.01 0.05" type="box" group="0" friction="1 0.005 0.0001" rgba="0.8 0.6 0.4 1" conaffinity="15" contype="4" />
+        <geom pos="0 -0.275 0.05" size="0.21 0.01 0.05" type="box" group="0" friction="1 0.005 0.0001" rgba="0.8 0.6 0.4 1" conaffinity="15" contype="4" />
+        <geom pos="0.2 0 0.05" size="0.01 0.275 0.05" type="box" group="0" friction="1 0.005 0.0001" rgba="0.8 0.6 0.4 1" conaffinity="15" contype="4" />
+        <geom pos="-0.2 0 0.05" size="0.01 0.275 0.05" type="box" group="0" friction="1 0.005 0.0001" rgba="0.8 0.6 0.4 1" conaffinity="15" contype="4" />
+        <!-- Legs -->
+        <geom pos="0.15 0.2 -0.4" size="0.01 0.4" type="cylinder" conaffinity="0" contype="0" group="1" rgba="0.5 0.5 0.5 1"/>
+        <geom pos="-0.15 0.2 -0.4" size="0.01 0.4" type="cylinder" conaffinity="0" contype="0" group="1" rgba="0.5 0.5 0.5 1"/>
+        <geom pos="-0.15 -0.2 -0.4" size="0.01 0.4" type="cylinder" conaffinity="0" contype="0" group="1" rgba="0.5 0.5 0.5 1"/>
+        <geom pos="0.15 -0.2 -0.4" size="0.01 0.4" type="cylinder" conaffinity="0" contype="0" group="1" rgba="0.5 0.5 0.5 1"/>
+    </body>
+    
+    <body name="bin2" pos="0.1 0.3 0.8">
+        <geom pos="0 0 0" size="0.2 0.25 0.02" type="box" group="0" friction="1 0.005 0.0001" conaffinity="15" contype="2" rgba="0.6 0.4 0.3 1"/>
+        <geom pos="0 0 -0.03" size="0.2 0.25 0.01" type="box" group="0" friction="1 0.005 0.0001" conaffinity="15" contype="2" rgba="0.6 0.4 0.3 1"/>
+        <!-- Table walls -->
+        <geom pos="0 0.25 0.05" size="0.21 0.01 0.05" type="box" group="0" friction="1 0.005 0.0001" rgba="0.6 0.4 0.3 1" conaffinity="15" contype="4" />
+        <geom pos="0 -0.25 0.05" size="0.21 0.01 0.05" type="box" group="0" friction="1 0.005 0.0001" rgba="0.6 0.4 0.3 1" conaffinity="15" contype="4" />
+        <geom pos="0.2 0 0.05" size="0.01 0.25 0.05" type="box" group="0" friction="1 0.005 0.0001" rgba="0.6 0.4 0.3 1" conaffinity="15" contype="4" />
+        <geom pos="-0.2 0 0.05" size="0.01 0.25 0.05" type="box" group="0" friction="1 0.005 0.0001" rgba="0.6 0.4 0.3 1" conaffinity="15" contype="4" />
+        <!-- Legs -->
+        <geom pos="0.15 0.2 -0.4" size="0.01 0.4" type="cylinder" conaffinity="0" contype="0" group="1" rgba="0.5 0.5 0.5 1"/>
+        <geom pos="-0.15 0.2 -0.4" size="0.01 0.4" type="cylinder" conaffinity="0" contype="0" group="1" rgba="0.5 0.5 0.5 1"/>
+        <geom pos="-0.15 -0.2 -0.4" size="0.01 0.4" type="cylinder" conaffinity="0" contype="0" group="1" rgba="0.5 0.5 0.5 1"/>
+        <geom pos="0.15 -0.2 -0.4" size="0.01 0.4" type="cylinder" conaffinity="0" contype="0" group="1" rgba="0.5 0.5 0.5 1"/>
+    </body>
+    
+    <light pos="1.0 1.0 1.5" dir="-0.2 -0.2 -1" specular="0.3 0.3 0.3" directional="true" castshadow="false"/>
+    <camera mode="fixed" name="frontview" pos="1.6 0 1.45" quat="0.56 0.43 0.43 0.56"/>
+    <camera mode="fixed" name="birdview" pos="-0.2 0 3.0" quat="0.7071 0 0 0.7071"/>
+    <camera mode="fixed" name="agentview" pos="1.0 0 1.75" quat="0.653 0.271 0.271 0.653"/>
+  </worldbody>
+</mujoco>

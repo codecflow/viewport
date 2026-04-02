@@ -1,0 +1,51 @@
+<mujoco model="rethink_mount">
+    <compiler angle="radian" meshdir="meshes" autolimits="true" />
+    <asset>
+        <!-- Mesh scaled visually -->
+        <mesh name="pedestal" file="rethink_mount/pedestal.stl" scale="0.6 0.6 0.6" />
+    </asset>
+
+    <worldbody>
+        <!-- base -->
+        <body name="base_r" pos="0 0 -0.5532">
+
+            <!-- controller_box -->
+            <body name="controller_box" pos="0 0 0">
+                <inertial diaginertia="1.71363 1.27988 0.809981" mass="46.64"
+                          pos="-0.195 0 -0.228" />
+                <geom pos="-0.195 0 -0.228" size="0.066 0.12 0.159"
+                      type="box" name="controller_box_col" group="3" />
+            </body>
+
+            <!-- pedestal_feet -->
+            <body name="pedestal_feet" pos="0 0 0">
+                <inertial diaginertia="8.16095 9.59375 15.0785" mass="167.09"
+                          pos="-0.0735 0 -0.4548" />
+                <geom pos="-0.0735 0 -0.4548" size="0.231 0.21 0.093"
+                      type="box" name="pedestal_feet_col" group="3" />
+            </body>
+
+            <!-- torso -->
+            <body name="torso" pos="0 0 0">
+                <inertial diaginertia="1e-08 1e-08 1e-08" mass="0.0001" pos="0 0 0" />
+                <geom conaffinity="0" contype="0" group="1" pos="0 0 -0.03"
+                      size="0.03 0.03 0.03" type="box" name="torso_vis"
+                      rgba="0.2 0.2 0.2 1" />
+            </body>
+
+            <!-- pedestal -->
+            <body name="pedestal" pos="0 0 0">
+                <inertial diaginertia="6.0869 5.81635 4.20915" mass="60.864"
+                          pos="0 0 0"
+                          quat="0.659267 -0.259505 -0.260945 0.655692" />
+                <geom conaffinity="0" contype="0" group="1"
+                      mesh="pedestal" type="mesh" name="pedestal_vis"
+                      rgba="0.2 0.2 0.2 1" />
+                <geom pos="-0.012 0 -0.174"
+                      rgba="0.2 0.2 0.2 1" size="0.108 0.186"
+                      type="cylinder" name="pedestal_col" group="3" />
+            </body>
+
+        </body>
+    </worldbody>
+</mujoco>

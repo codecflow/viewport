@@ -1,0 +1,11 @@
+{
+  "_format": "simarena/controller@1.0",
+  "type": "g1",
+  "model": "/scene/g1/g1_policy.onnx",
+  "actionScale": 0.5,
+  "decimation": 10,
+  "controlMode": "external_pd",
+  "kp": 75,
+  "kd": 2.0,
+  "defaultPos": [-0.312, 0, 0, 0.669, -0.363, 0, -0.312, 0, 0, 0.669, -0.363, 0, 0, 0, 0, 0.2, 0.2, 0, 0.6, 0, 0, 0, 0.2, -0.2, 0, 0.6, 0, 0, 0]
+}

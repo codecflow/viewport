@@ -1,0 +1,25 @@
+{
+  "name": "SO100 Teleop",
+  "scene": "scene.xml",
+  "files": [
+    "scene.xml",
+    "assets/Base.stl",
+    "assets/Base_Motor.stl",
+    "assets/Rotation_Pitch.stl",
+    "assets/Rotation_Pitch_Motor.stl",
+    "assets/Upper_Arm.stl",
+    "assets/Upper_Arm_Motor.stl",
+    "assets/Lower_Arm.stl",
+    "assets/Lower_Arm_Motor.stl",
+    "assets/Wrist_Pitch_Roll.stl",
+    "assets/Wrist_Pitch_Roll_Motor.stl",
+    "assets/Fixed_Jaw.stl",
+    "assets/Fixed_Jaw_Motor.stl",
+    "assets/Fixed_Jaw_Collision_1.stl",
+    "assets/Fixed_Jaw_Collision_2.stl",
+    "assets/Moving_Jaw.stl",
+    "assets/Moving_Jaw_Collision_1.stl",
+    "assets/Moving_Jaw_Collision_2.stl",
+    "assets/Moving_Jaw_Collision_3.stl"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Go2 Quadruped",
+  "scene": "go2.xml",
+  "files": [
+    "go2.xml",
+    "meshes/base.stl",
+    "meshes/calf.stl",
+    "meshes/calf_mirror.stl",
+    "meshes/foot.stl",
+    "meshes/hip.stl",
+    "meshes/thigh.stl",
+    "meshes/thigh_mirror.stl"
+  ]
+}

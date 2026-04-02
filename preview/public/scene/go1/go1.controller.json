@@ -1,0 +1,9 @@
+{
+  "_format": "simarena/controller@1.0",
+  "type": "go1",
+  "model": "/scene/go2/go1_policy.onnx",
+  "actionScale": 0.5,
+  "decimation": 4,
+  "controlMode": "position",
+  "defaultPos": [0.1, 0.9, -1.8, -0.1, 0.9, -1.8, 0.1, 0.9, -1.8, -0.1, 0.9, -1.8]
+}

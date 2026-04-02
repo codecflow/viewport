@@ -1,0 +1,49 @@
+{
+  "_format": "simarena/asset@1.0",
+  "name": "Plate",
+  "meshes": [
+    {
+      "name": "plate_vis",
+      "file": "plate/textured.obj"
+    },
+    {
+      "name": "plate_col",
+      "file": "plate/mesh.stl"
+    }
+  ],
+  "entities": [
+    {
+      "name": "Plate",
+      "transform": {
+        "pos": [
+          0,
+          0,
+          0
+        ]
+      },
+      "geoms": [
+        {
+          "type": "mesh",
+          "mesh": "plate_vis",
+          "group": "vis"
+        },
+        {
+          "type": "mesh",
+          "mesh": "plate_col",
+          "group": "col"
+        }
+      ],
+      "visual": {
+        "groups": [
+          "vis"
+        ]
+      },
+      "collider": {
+        "groups": [
+          "col"
+        ]
+      },
+      "physics": { "dynamic": false }
+    }
+  ]
+}

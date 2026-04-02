@@ -1,0 +1,22 @@
+{
+  "_format": "simarena/scene@1.0",
+  "name": "multi-asset-test",
+  "sim": { "timestep": 0.002, "gravity": [0, 0, -9.81] },
+  "scene": [
+    {
+      "name": "so100",
+      "asset": "/scene/test/so100.scene.json",
+      "transform": { "pos": [-0.4, 0, 0] }
+    },
+    {
+      "name": "panda",
+      "asset": "/scene/test/panda.scene.json",
+      "transform": { "pos": [0.4, 0, 0] }
+    },
+    {
+      "name": "so100_small",
+      "asset": "/scene/test/so100.scene.json",
+      "transform": { "pos": [0, 0.5, 0], "scale": 0.5 }
+    }
+  ]
+}

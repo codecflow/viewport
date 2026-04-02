@@ -1,0 +1,141 @@
+{
+  "name": "SO100 Teleop",
+  "bodies": [
+    {
+      "name": "Base",
+      "glb": "/scene/so100/glb/Base.glb",
+      "geoms": [],
+      "children": [
+        {
+          "name": "Rotation_Pitch",
+          "glb": "/scene/so100/glb/Rotation_Pitch.glb",
+          "geoms": [],
+          "children": [
+            {
+              "name": "Upper_Arm",
+              "glb": "/scene/so100/glb/Upper_Arm.glb",
+              "geoms": [],
+              "children": [
+                {
+                  "name": "Lower_Arm",
+                  "glb": "/scene/so100/glb/Lower_Arm.glb",
+                  "geoms": [],
+                  "children": [
+                    {
+                      "name": "Wrist_Pitch_Roll",
+                      "glb": "/scene/so100/glb/Wrist_Pitch_Roll.glb",
+                      "geoms": [],
+                      "children": [
+                        {
+                          "name": "Fixed_Jaw",
+                          "glb": "/scene/so100/glb/Fixed_Jaw.glb",
+                          "geoms": [],
+                          "children": [
+                            {
+                              "name": "Moving_Jaw",
+                              "glb": "/scene/so100/glb/Moving_Jaw.glb",
+                              "geoms": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "table",
+      "geoms": [
+        {
+          "type": "box",
+          "size": [0.5, 0.4, 0.02],
+          "rgba": [0.8, 0.6, 0.4, 1]
+        },
+        {
+          "type": "cylinder",
+          "size": [0.02, 0.2],
+          "pos": { "x": 0.45, "y": 0.35, "z": -0.2 },
+          "rgba": [0.8, 0.6, 0.4, 1]
+        },
+        {
+          "type": "cylinder",
+          "size": [0.02, 0.2],
+          "pos": { "x": 0.45, "y": -0.35, "z": -0.2 },
+          "rgba": [0.8, 0.6, 0.4, 1]
+        },
+        {
+          "type": "cylinder",
+          "size": [0.02, 0.2],
+          "pos": { "x": -0.45, "y": 0.35, "z": -0.2 },
+          "rgba": [0.8, 0.6, 0.4, 1]
+        },
+        {
+          "type": "cylinder",
+          "size": [0.02, 0.2],
+          "pos": { "x": -0.45, "y": -0.35, "z": -0.2 },
+          "rgba": [0.8, 0.6, 0.4, 1]
+        }
+      ]
+    },
+    {
+      "name": "banana",
+      "geoms": [
+        {
+          "type": "capsule",
+          "size": [0.02, 0.06],
+          "quat": { "x": 0, "y": 0.149438, "z": 0, "w": 0.988771 },
+          "rgba": [1, 1, 0, 1]
+        }
+      ]
+    },
+    {
+      "name": "bowl",
+      "geoms": [
+        {
+          "type": "cylinder",
+          "size": [0.08, 0.03],
+          "rgba": [0, 0.5, 1, 1]
+        }
+      ]
+    }
+  ],
+  "actuators": [
+    { "name": "Rotation",   "joint": "Rotation",   "range": [-2.2, 2.2],         "type": "position", "kp": 50 },
+    { "name": "Pitch",      "joint": "Pitch",      "range": [-3.14158, 0.2],     "type": "position", "kp": 50 },
+    { "name": "Elbow",      "joint": "Elbow",      "range": [0, 3.14158],        "type": "position", "kp": 50 },
+    { "name": "Wrist_Pitch","joint": "Wrist_Pitch","range": [-2, 1.8],           "type": "position", "kp": 50 },
+    { "name": "Wrist_Roll", "joint": "Wrist_Roll", "range": [-3.14158, 3.14158], "type": "position", "kp": 50 },
+    { "name": "Jaw",        "joint": "Jaw",        "range": [-0.2, 2],           "type": "position", "kp": 50 }
+  ],
+  "cameras": [
+    { "name": "front",    "pos": { "x": 1.5, "y": 1.0, "z": 1.5 }, "target": { "x": 0, "y": 0, "z": 0.5 } }
+  ],
+  "physics": {
+    "xmlFile": "/scene/so100/scene.xml",
+    "meshFiles": [
+      "/scene/so100/assets/Base.stl",
+      "/scene/so100/assets/Base_Motor.stl",
+      "/scene/so100/assets/Rotation_Pitch.stl",
+      "/scene/so100/assets/Rotation_Pitch_Motor.stl",
+      "/scene/so100/assets/Upper_Arm.stl",
+      "/scene/so100/assets/Upper_Arm_Motor.stl",
+      "/scene/so100/assets/Lower_Arm.stl",
+      "/scene/so100/assets/Lower_Arm_Motor.stl",
+      "/scene/so100/assets/Wrist_Pitch_Roll.stl",
+      "/scene/so100/assets/Wrist_Pitch_Roll_Motor.stl",
+      "/scene/so100/assets/Fixed_Jaw.stl",
+      "/scene/so100/assets/Fixed_Jaw_Motor.stl",
+      "/scene/so100/assets/Fixed_Jaw_Collision_1.stl",
+      "/scene/so100/assets/Fixed_Jaw_Collision_2.stl",
+      "/scene/so100/assets/Moving_Jaw.stl",
+      "/scene/so100/assets/Moving_Jaw_Collision_1.stl",
+      "/scene/so100/assets/Moving_Jaw_Collision_2.stl",
+      "/scene/so100/assets/Moving_Jaw_Collision_3.stl"
+    ]
+  }
+}

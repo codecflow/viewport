@@ -1,0 +1,808 @@
+{
+  "_format": "simarena/asset@1.0",
+  "name": "so_arm100",
+  "meshes": [
+    {
+      "name": "Base",
+      "file": "/scene/so100/assets/Base.stl"
+    },
+    {
+      "name": "Base_Motor",
+      "file": "/scene/so100/assets/Base_Motor.stl"
+    },
+    {
+      "name": "Rotation_Pitch",
+      "file": "/scene/so100/assets/Rotation_Pitch.stl"
+    },
+    {
+      "name": "Rotation_Pitch_Motor",
+      "file": "/scene/so100/assets/Rotation_Pitch_Motor.stl"
+    },
+    {
+      "name": "Upper_Arm",
+      "file": "/scene/so100/assets/Upper_Arm.stl"
+    },
+    {
+      "name": "Upper_Arm_Motor",
+      "file": "/scene/so100/assets/Upper_Arm_Motor.stl"
+    },
+    {
+      "name": "Lower_Arm",
+      "file": "/scene/so100/assets/Lower_Arm.stl"
+    },
+    {
+      "name": "Lower_Arm_Motor",
+      "file": "/scene/so100/assets/Lower_Arm_Motor.stl"
+    },
+    {
+      "name": "Wrist_Pitch_Roll",
+      "file": "/scene/so100/assets/Wrist_Pitch_Roll.stl"
+    },
+    {
+      "name": "Wrist_Pitch_Roll_Motor",
+      "file": "/scene/so100/assets/Wrist_Pitch_Roll_Motor.stl"
+    },
+    {
+      "name": "Fixed_Jaw",
+      "file": "/scene/so100/assets/Fixed_Jaw.stl"
+    },
+    {
+      "name": "Fixed_Jaw_Motor",
+      "file": "/scene/so100/assets/Fixed_Jaw_Motor.stl"
+    },
+    {
+      "name": "Fixed_Jaw_Collision_1",
+      "file": "/scene/so100/assets/Fixed_Jaw_Collision_1.stl"
+    },
+    {
+      "name": "Fixed_Jaw_Collision_2",
+      "file": "/scene/so100/assets/Fixed_Jaw_Collision_2.stl"
+    },
+    {
+      "name": "Moving_Jaw",
+      "file": "/scene/so100/assets/Moving_Jaw.stl"
+    },
+    {
+      "name": "Moving_Jaw_Collision_1",
+      "file": "/scene/so100/assets/Moving_Jaw_Collision_1.stl"
+    },
+    {
+      "name": "Moving_Jaw_Collision_2",
+      "file": "/scene/so100/assets/Moving_Jaw_Collision_2.stl"
+    },
+    {
+      "name": "Moving_Jaw_Collision_3",
+      "file": "/scene/so100/assets/Moving_Jaw_Collision_3.stl"
+    }
+  ],
+  "materials": [
+    {
+      "name": "orange",
+      "rgba": [
+        1,
+        0.331,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "black",
+      "rgba": [
+        0.1,
+        0.1,
+        0.1,
+        1
+      ]
+    }
+  ],
+  "exclusions": [
+    {
+      "body1": "Base",
+      "body2": "Rotation_Pitch"
+    }
+  ],
+  "entities": [
+    {
+      "name": "Base",
+      "physics": {
+        "dynamic": false
+      },
+      "geoms": [
+        {
+          "type": "mesh",
+          "mesh": "Base",
+          "material": "orange",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Base_Motor",
+          "material": "black",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Base",
+          "group": "collision"
+        }
+      ],
+      "collider": {
+        "groups": [
+          "collision"
+        ]
+      },
+      "visual": {
+        "groups": [
+          "visual"
+        ]
+      }
+    },
+    {
+      "name": "Rotation_Pitch",
+      "transform": {
+        "pos": [
+          0,
+          -0.0452,
+          0.0165
+        ],
+        "quat": [
+          0.707105,
+          0.707108,
+          0,
+          0
+        ]
+      },
+      "physics": {
+        "dynamic": true,
+        "mass": 0.119226,
+        "centerOfMass": [
+          -9.1e-05,
+          0.059097,
+          0.031089
+        ],
+        "inertia": [
+          5.9e-05,
+          5.9e-05,
+          3.1e-05
+        ],
+        "inertiaQuat": [
+          0.363978,
+          0.441169,
+          -0.623108,
+          0.533504
+        ]
+      },
+      "joint": {
+        "type": "hinge",
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "range": [
+          -2.2,
+          2.2
+        ],
+        "armature": 0.1,
+        "drive": {
+          "mode": "position",
+          "stiffness": 50,
+          "damping": 1,
+          "forceLimit": 35,
+          "ctrlrange": [
+            -3.14158,
+            3.14158
+          ]
+        }
+      },
+      "geoms": [
+        {
+          "type": "mesh",
+          "mesh": "Rotation_Pitch",
+          "material": "orange",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Rotation_Pitch_Motor",
+          "material": "black",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Rotation_Pitch",
+          "group": "collision"
+        }
+      ],
+      "collider": {
+        "groups": [
+          "collision"
+        ]
+      },
+      "visual": {
+        "groups": [
+          "visual"
+        ]
+      },
+      "relation": {
+        "parent": "Base"
+      }
+    },
+    {
+      "name": "Upper_Arm",
+      "transform": {
+        "pos": [
+          0,
+          0.1025,
+          0.0306
+        ],
+        "quat": [
+          0.707109,
+          0.707105,
+          0,
+          0
+        ]
+      },
+      "physics": {
+        "dynamic": true,
+        "mass": 0.162409,
+        "centerOfMass": [
+          -1.7e-05,
+          0.07018,
+          0.003105
+        ],
+        "inertia": [
+          0.000213,
+          0.000167,
+          7e-05
+        ],
+        "inertiaQuat": [
+          0.50104,
+          0.498994,
+          -0.493562,
+          0.50632
+        ]
+      },
+      "joint": {
+        "type": "hinge",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "range": [
+          -3.14158,
+          0.2
+        ],
+        "armature": 0.1,
+        "drive": {
+          "mode": "position",
+          "stiffness": 50,
+          "damping": 1,
+          "forceLimit": 35,
+          "ctrlrange": [
+            -3.14158,
+            3.14158
+          ]
+        }
+      },
+      "geoms": [
+        {
+          "type": "mesh",
+          "mesh": "Upper_Arm",
+          "material": "orange",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Upper_Arm_Motor",
+          "material": "black",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Upper_Arm",
+          "group": "collision"
+        }
+      ],
+      "collider": {
+        "groups": [
+          "collision"
+        ]
+      },
+      "visual": {
+        "groups": [
+          "visual"
+        ]
+      },
+      "relation": {
+        "parent": "Rotation_Pitch"
+      }
+    },
+    {
+      "name": "Lower_Arm",
+      "transform": {
+        "pos": [
+          0,
+          0.11257,
+          0.028
+        ],
+        "quat": [
+          0.707109,
+          -0.707105,
+          0,
+          0
+        ]
+      },
+      "physics": {
+        "dynamic": true,
+        "mass": 0.147968,
+        "centerOfMass": [
+          -0.003396,
+          0.001378,
+          0.076801
+        ],
+        "inertia": [
+          0.000139,
+          0.000108,
+          4.8e-05
+        ],
+        "inertiaQuat": [
+          0.701995,
+          0.0788,
+          0.064563,
+          0.704859
+        ]
+      },
+      "joint": {
+        "type": "hinge",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "range": [
+          0,
+          3.14158
+        ],
+        "armature": 0.1,
+        "drive": {
+          "mode": "position",
+          "stiffness": 50,
+          "damping": 1,
+          "forceLimit": 35,
+          "ctrlrange": [
+            -3.14158,
+            3.14158
+          ]
+        }
+      },
+      "geoms": [
+        {
+          "type": "mesh",
+          "mesh": "Lower_Arm",
+          "material": "orange",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Lower_Arm_Motor",
+          "material": "black",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Lower_Arm",
+          "group": "collision"
+        }
+      ],
+      "collider": {
+        "groups": [
+          "collision"
+        ]
+      },
+      "visual": {
+        "groups": [
+          "visual"
+        ]
+      },
+      "relation": {
+        "parent": "Upper_Arm"
+      }
+    },
+    {
+      "name": "Wrist_Pitch_Roll",
+      "transform": {
+        "pos": [
+          0,
+          0.0052,
+          0.1349
+        ],
+        "quat": [
+          0.707109,
+          -0.707105,
+          0,
+          0
+        ]
+      },
+      "physics": {
+        "dynamic": true,
+        "mass": 0.066132,
+        "centerOfMass": [
+          -0.008527,
+          -0.035228,
+          -2.3e-05
+        ],
+        "inertia": [
+          3.5e-05,
+          2.4e-05,
+          1.9e-05
+        ],
+        "inertiaQuat": [
+          -0.052281,
+          0.705235,
+          0.054952,
+          0.704905
+        ]
+      },
+      "joint": {
+        "type": "hinge",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "range": [
+          -2,
+          1.8
+        ],
+        "armature": 0.1,
+        "drive": {
+          "mode": "position",
+          "stiffness": 50,
+          "damping": 1,
+          "forceLimit": 35,
+          "ctrlrange": [
+            -3.14158,
+            3.14158
+          ]
+        }
+      },
+      "geoms": [
+        {
+          "type": "mesh",
+          "mesh": "Wrist_Pitch_Roll",
+          "material": "orange",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Wrist_Pitch_Roll_Motor",
+          "material": "black",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Wrist_Pitch_Roll",
+          "group": "collision"
+        }
+      ],
+      "collider": {
+        "groups": [
+          "collision"
+        ]
+      },
+      "visual": {
+        "groups": [
+          "visual"
+        ]
+      },
+      "relation": {
+        "parent": "Lower_Arm"
+      }
+    },
+    {
+      "name": "Fixed_Jaw",
+      "transform": {
+        "pos": [
+          0,
+          -0.0601,
+          0
+        ],
+        "quat": [
+          0.707109,
+          0,
+          0.707105,
+          0
+        ]
+      },
+      "physics": {
+        "dynamic": true,
+        "mass": 0.092986,
+        "centerOfMass": [
+          0.005524,
+          -0.028017,
+          0.000484
+        ],
+        "inertia": [
+          5e-05,
+          4.6e-05,
+          2.7e-05
+        ],
+        "inertiaQuat": [
+          0.41836,
+          0.620891,
+          -0.350644,
+          0.562599
+        ]
+      },
+      "joint": {
+        "type": "hinge",
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "range": [
+          -3.14158,
+          3.14158
+        ],
+        "armature": 0.1,
+        "drive": {
+          "mode": "position",
+          "stiffness": 50,
+          "damping": 1,
+          "forceLimit": 35,
+          "ctrlrange": [
+            -3.14158,
+            3.14158
+          ]
+        }
+      },
+      "geoms": [
+        {
+          "type": "mesh",
+          "mesh": "Fixed_Jaw",
+          "material": "orange",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Fixed_Jaw_Motor",
+          "material": "black",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Fixed_Jaw_Collision_1",
+          "group": "collision"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Fixed_Jaw_Collision_2",
+          "group": "collision"
+        },
+        {
+          "type": "box",
+          "size": [
+            0.002,
+            0.01,
+            0.008
+          ],
+          "group": "collision",
+          "pos": [
+            0.0089,
+            -0.1014,
+            0
+          ]
+        },
+        {
+          "type": "box",
+          "size": [
+            0.002,
+            0.01,
+            0.012
+          ],
+          "group": "collision",
+          "pos": [
+            0.0109,
+            -0.0914,
+            0
+          ]
+        },
+        {
+          "type": "box",
+          "size": [
+            0.002,
+            0.02,
+            0.014
+          ],
+          "group": "collision",
+          "pos": [
+            0.0126,
+            -0.0768,
+            0
+          ]
+        },
+        {
+          "type": "box",
+          "size": [
+            0.002,
+            0.02,
+            0.016
+          ],
+          "group": "collision",
+          "pos": [
+            0.0143,
+            -0.0572,
+            0
+          ]
+        }
+      ],
+      "collider": {
+        "groups": [
+          "collision"
+        ]
+      },
+      "visual": {
+        "groups": [
+          "visual"
+        ]
+      },
+      "relation": {
+        "parent": "Wrist_Pitch_Roll"
+      }
+    },
+    {
+      "name": "Moving_Jaw",
+      "transform": {
+        "pos": [
+          -0.0202,
+          -0.0244,
+          0
+        ],
+        "quat": [
+          0,
+          -4e-06,
+          1,
+          -4e-06
+        ]
+      },
+      "physics": {
+        "dynamic": true,
+        "mass": 0.020244,
+        "centerOfMass": [
+          -0.001617,
+          -0.030347,
+          0.00045
+        ],
+        "inertia": [
+          1.1e-05,
+          9e-06,
+          3e-06
+        ],
+        "inertiaQuat": [
+          0.696562,
+          0.716737,
+          -0.023984,
+          -0.022703
+        ]
+      },
+      "joint": {
+        "type": "hinge",
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "range": [
+          -0.2,
+          2
+        ],
+        "armature": 0.1,
+        "drive": {
+          "mode": "position",
+          "stiffness": 50,
+          "damping": 1,
+          "forceLimit": 35,
+          "ctrlrange": [
+            -3.14158,
+            3.14158
+          ]
+        }
+      },
+      "geoms": [
+        {
+          "type": "mesh",
+          "mesh": "Moving_Jaw",
+          "material": "orange",
+          "group": "visual"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Moving_Jaw_Collision_1",
+          "group": "collision"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Moving_Jaw_Collision_2",
+          "group": "collision"
+        },
+        {
+          "type": "mesh",
+          "mesh": "Moving_Jaw_Collision_3",
+          "group": "collision"
+        },
+        {
+          "type": "box",
+          "size": [
+            0.002,
+            0.01,
+            0.008
+          ],
+          "group": "collision",
+          "pos": [
+            -0.0113,
+            -0.077,
+            0
+          ]
+        },
+        {
+          "type": "box",
+          "size": [
+            0.002,
+            0.01,
+            0.012
+          ],
+          "group": "collision",
+          "pos": [
+            -0.0093,
+            -0.067,
+            0
+          ]
+        },
+        {
+          "type": "box",
+          "size": [
+            0.002,
+            0.02,
+            0.012
+          ],
+          "group": "collision",
+          "pos": [
+            -0.0073,
+            -0.055,
+            0
+          ]
+        },
+        {
+          "type": "box",
+          "size": [
+            0.002,
+            0.02,
+            0.016
+          ],
+          "group": "collision",
+          "pos": [
+            -0.0073,
+            -0.035,
+            0
+          ]
+        }
+      ],
+      "collider": {
+        "groups": [
+          "collision"
+        ]
+      },
+      "visual": {
+        "groups": [
+          "visual"
+        ]
+      },
+      "relation": {
+        "parent": "Fixed_Jaw"
+      }
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "_format": "simarena/asset@1.0",
+  "name": "Banana",
+  "meshes": [
+    {
+      "name": "banana_vis",
+      "file": "banana/textured.obj"
+    },
+    {
+      "name": "banana_col",
+      "file": "banana/mesh.stl"
+    }
+  ],
+  "entities": [
+    {
+      "name": "Banana",
+      "transform": {
+        "pos": [
+          0,
+          0,
+          0
+        ]
+      },
+      "geoms": [
+        {
+          "type": "mesh",
+          "mesh": "banana_vis",
+          "group": "vis"
+        },
+        {
+          "type": "mesh",
+          "mesh": "banana_col",
+          "group": "col"
+        }
+      ],
+      "visual": {
+        "groups": [
+          "vis"
+        ]
+      },
+      "collider": {
+        "groups": [
+          "col"
+        ]
+      },
+      "physics": {
+        "dynamic": true,
+        "mass": 0.12
+      },
+      "joint": {
+        "type": "free"
+      }
+    }
+  ]
+}

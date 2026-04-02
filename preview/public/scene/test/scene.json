@@ -1,0 +1,92 @@
+{
+  "_format": "simarena/scene@1.0",
+  "name": "so100-table-test",
+
+  "task": {
+    "instruction": "Pick up the banana and place it in the bowl",
+    "episode_length": 200
+  },
+
+  "sim": {
+    "timestep": 0.005,
+    "gravity": [0, 0, -9.81],
+    "substeps": 2
+  },
+
+  "scene": [
+
+    {
+      "name": "table",
+      "physics": { "dynamic": false },
+      "geoms": [
+        { "type": "box",      "size": [1.0, 0.8, 0.04], "pos": [0, 0, 0.42],        "color": "#c8a060", "group": "visual" },
+        { "type": "cylinder", "radius": 0.025, "height": 0.4, "pos": [ 0.45, -0.35, 0.2], "color": "#8a6030", "group": "visual" },
+        { "type": "cylinder", "radius": 0.025, "height": 0.4, "pos": [-0.45, -0.35, 0.2], "color": "#8a6030", "group": "visual" },
+        { "type": "cylinder", "radius": 0.025, "height": 0.4, "pos": [ 0.45,  0.35, 0.2], "color": "#8a6030", "group": "visual" },
+        { "type": "cylinder", "radius": 0.025, "height": 0.4, "pos": [-0.45,  0.35, 0.2], "color": "#8a6030", "group": "visual" },
+        { "type": "box", "size": [1.0, 0.8, 0.04], "pos": [0, 0, 0.42], "group": "collision" }
+      ],
+      "visual": { "groups": ["visual"] },
+      "collider": { "groups": ["collision"] }
+    },
+
+    {
+      "name": "arm",
+      "asset": "/scene/test/so100.scene.json",
+      "transform": { "pos": [0, 0, 0.44] }
+    },
+
+    {
+      "name": "banana",
+      "transform": { "pos": [0.2, -0.1, 0.44] },
+      "joint": { "type": "free" },
+      "geoms": [
+        { "type": "capsule", "radius": 0.02, "height": 0.08, "rot": [0, 0, 8], "color": "#f5e020", "group": "visual" },
+        { "type": "capsule", "radius": 0.02, "height": 0.08, "group": "collision" }
+      ],
+      "visual": { "groups": ["visual"] },
+      "collider": { "groups": ["collision"] },
+      "physics": { "dynamic": true, "mass": 0.05, "friction": 0.8 }
+    },
+
+    {
+      "name": "bowl",
+      "transform": { "pos": [-0.2, -0.1, 0.44] },
+      "physics": { "dynamic": false },
+      "geoms": [
+        { "type": "cylinder", "radius": 0.08, "height": 0.04, "color": "#2080d0", "opacity": 0.6, "group": "visual" },
+        { "type": "cylinder", "radius": 0.08, "height": 0.04, "group": "collision" }
+      ],
+      "visual": { "groups": ["visual"] },
+      "collider": { "groups": ["collision"] }
+    },
+
+    {
+      "name": "cube",
+      "transform": { "pos": [0.15, 0.1, 0.46] },
+      "joint": { "type": "free" },
+      "geoms": [
+        { "type": "box", "size": [0.04, 0.04, 0.04], "color": "#e62626", "group": "visual" },
+        { "type": "box", "size": [0.04, 0.04, 0.04], "group": "collision" }
+      ],
+      "visual": { "groups": ["visual"] },
+      "collider": { "groups": ["collision"] },
+      "physics": { "dynamic": true, "mass": 0.03, "friction": 1.0 }
+    },
+
+    {
+      "name": "target",
+      "transform": { "pos": [-0.15, 0.1, 0.441] },
+      "geoms": [
+        { "type": "box", "size": [0.06, 0.06, 0.002], "color": "#26e626", "opacity": 0.5 }
+      ]
+    },
+
+    {
+      "name": "overhead_light",
+      "transform": { "pos": [0, 0, 2.5] },
+      "light": { "type": "point", "color": "#fff8f0", "intensity": 1.5, "range": 6 }
+    }
+
+  ]
+}

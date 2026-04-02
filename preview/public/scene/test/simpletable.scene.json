@@ -1,0 +1,27 @@
+{
+  "_format": "simarena/asset@1.0",
+  "name": "simple_wood_table",
+  "entities": [
+    {
+      "name": "simpleWoodTable",
+      "transform": { "pos": [0, 0, 0] },
+      "physics": { "dynamic": false, "mass": 40 },
+      "geoms": [
+        { "type": "box", "size": [1.2, 0.75, 0.05],  "pos": [0, 0, 0.735], "color": "#8b5e3c", "group": "visual" },
+        { "type": "box", "size": [1.18, 0.52, 0.1],   "pos": [0, 0, 0.66],  "color": "#7a5230", "group": "visual" },
+        { "type": "box", "size": [0.05, 0.05, 0.61],  "pos": [-0.565,  0.235, 0.305], "color": "#7a5230", "group": "visual" },
+        { "type": "box", "size": [0.05, 0.05, 0.61],  "pos": [-0.565, -0.235, 0.305], "color": "#7a5230", "group": "visual" },
+        { "type": "box", "size": [0.05, 0.05, 0.61],  "pos": [ 0.565,  0.235, 0.305], "color": "#7a5230", "group": "visual" },
+        { "type": "box", "size": [0.05, 0.05, 0.61],  "pos": [ 0.565, -0.235, 0.305], "color": "#7a5230", "group": "visual" },
+        { "type": "box", "size": [1.2, 0.75, 0.05],  "pos": [0, 0, 0.735], "group": "collision", "contype": 1, "conaffinity": 1 },
+        { "type": "box", "size": [1.18, 0.52, 0.1],   "pos": [0, 0, 0.66],  "group": "collision", "contype": 1, "conaffinity": 1 },
+        { "type": "box", "size": [0.05, 0.05, 0.61],  "pos": [-0.565,  0.235, 0.305], "group": "collision", "contype": 1, "conaffinity": 1 },
+        { "type": "box", "size": [0.05, 0.05, 0.61],  "pos": [-0.565, -0.235, 0.305], "group": "collision", "contype": 1, "conaffinity": 1 },
+        { "type": "box", "size": [0.05, 0.05, 0.61],  "pos": [ 0.565,  0.235, 0.305], "group": "collision", "contype": 1, "conaffinity": 1 },
+        { "type": "box", "size": [0.05, 0.05, 0.61],  "pos": [ 0.565, -0.235, 0.305], "group": "collision", "contype": 1, "conaffinity": 1 }
+      ],
+      "visual":   { "groups": ["visual"] },
+      "collider": { "groups": ["collision"] }
+    }
+  ]
+}
