@@ -43,30 +43,33 @@ export interface SimFrame {
 	output?: unknown;
 }
 
-// ── Commands (consumer → backend) ─────────────────────────────────────────────
+// ── Commands (consumer → engine) ──────────────────────────────────────────────
 export type SimCommand =
-	| { type: 'start'; scene: unknown }
+	| { type: 'load'; scene: unknown }
 	| { type: 'stop' }
 	| { type: 'reset' }
 	| { type: 'ctrl'; values: Float64Array }
 	| { type: 'command'; values: Float32Array }
+	| { type: 'setqpos'; qpos: Float64Array }
 	| { type: 'pause' }
 	| { type: 'resume' };
 
-// ── Events (backend → consumer) ───────────────────────────────────────────────
+// ── Events (engine → consumer) ────────────────────────────────────────────────
 export type SimEvent =
 	| { type: 'scene'; data: SimScene }
 	| { type: 'frame'; data: SimFrame }
 	| { type: 'status'; text: string }
 	| { type: 'error'; message: string };
 
-export interface SimSource {
+// ── Connection ────────────────────────────────────────────────────────────────
+// A bidirectional channel to any sim engine — local Worker or remote server.
+// Obtained from a transport-specific factory (connectWorker, connectWs, etc.).
+export interface SimConnection {
 	send(cmd: SimCommand): void;
 	on(type: 'scene', cb: (data: SimScene) => void): void;
 	on(type: 'frame', cb: (data: SimFrame) => void): void;
 	on(type: 'status', cb: (text: string) => void): void;
 	on(type: 'error', cb: (message: string) => void): void;
-	/** Sends { type: 'start' } and resolves when the 'scene' event arrives. */
-	start(scene: unknown): Promise<void>;
+	off(type: string, cb: (...args: never[]) => void): void;
 	close(): void;
 }

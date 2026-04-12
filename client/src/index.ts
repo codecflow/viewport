@@ -12,4 +12,4 @@ export type { BodySnapshot } from './sync.js';
 export { loadBodies, connectSim } from './sync.js';
 export type { BodyInfo, LoadBodiesOpts, LoadBodiesResult, SimOpts, SimHandle } from './sync.js';
 
-export type { SimScene, SimFrame, Contact, SimSource, SimCommand, SimEvent } from './types.js';
+export type { SimScene, SimFrame, Contact, SimConnection, SimCommand, SimEvent } from './types.js';
