@@ -52,7 +52,8 @@ export type SimCommand =
 	| { type: 'command'; values: Float32Array }
 	| { type: 'setqpos'; qpos: Float64Array }
 	| { type: 'pause' }
-	| { type: 'resume' };
+	| { type: 'resume' }
+	| { type: 'configure'; contacts?: boolean; sensors?: boolean; output?: boolean; snapshotHz?: number; speed?: number };
 
 // ── Events (engine → consumer) ────────────────────────────────────────────────
 export type SimEvent =
