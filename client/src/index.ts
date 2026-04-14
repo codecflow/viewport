@@ -13,3 +13,6 @@ export { loadBodies, connectSim } from './sync.js';
 export type { BodyInfo, LoadBodiesOpts, LoadBodiesResult, SimOpts, SimHandle } from './sync.js';
 
 export type { SimScene, SimFrame, Contact, SimConnection, SimCommand, SimEvent } from './types.js';
+
+export { LidarViz } from './sensors/index.js';
+export type { LidarScanConfig, ScanPattern } from './sensors/index.js';
