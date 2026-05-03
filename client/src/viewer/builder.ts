@@ -8,13 +8,16 @@ import * as THREE from 'three';
 import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import type { VisualScene, BodyDesc, GeomDesc, LightDesc, MaterialDesc } from './types.js';
 
 // ── Asset caches ──────────────────────────────────────────────────────────────
 
 const stlLoader = new STLLoader();
+const gltfLoader = new GLTFLoader();
 const geoCache = new Map<string, THREE.BufferGeometry>();
 const objGroupCache = new Map<string, THREE.Group>();
+const gltfGroupCache = new Map<string, THREE.Group>();
 const mtlCreatorCache = new Map<string, MTLLoader.MaterialCreator | null>();
 const texCache = new Map<string, THREE.Texture>();
 const texLoader = new THREE.TextureLoader();
@@ -66,6 +69,18 @@ async function loadOBJGroup(url: string): Promise<THREE.Group> {
 		}
 	});
 	objGroupCache.set(cacheKey, grp);
+	return grp.clone() as THREE.Group;
+}
+
+async function loadGLTFGroup(url: string): Promise<THREE.Group> {
+	const hit = gltfGroupCache.get(url);
+	if (hit) return hit.clone() as THREE.Group;
+	const gltf = await gltfLoader.loadAsync(url);
+	const grp = gltf.scene;
+	grp.traverse((c) => {
+		if (c instanceof THREE.Mesh) { c.castShadow = true; c.receiveShadow = true; }
+	});
+	gltfGroupCache.set(url, grp);
 	return grp.clone() as THREE.Group;
 }
 
@@ -141,7 +156,11 @@ function applyTransform(obj: THREE.Object3D, geom: GeomDesc): void {
 async function buildGeomObject(geom: GeomDesc, parent: THREE.Group): Promise<void> {
 	if (geom.type === 'mesh' && geom.meshUrl) {
 		try {
-			if (/\.(obj|OBJ)$/.test(geom.meshUrl)) {
+			if (/\.(glb|gltf)$/i.test(geom.meshUrl)) {
+				const grp = await loadGLTFGroup(geom.meshUrl);
+				applyTransform(grp, geom);
+				parent.add(grp);
+			} else if (/\.(obj|OBJ)$/.test(geom.meshUrl)) {
 				const grp = await loadOBJGroup(geom.meshUrl);
 				if (geom.material) {
 					const mat = buildMat(geom.material);

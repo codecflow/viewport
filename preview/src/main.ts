@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { createViewport, buildSceneFromVisual } from '@simarena/viewport';
+import { createViewport, buildSceneFromVisual, flattenBodies, applyTransforms, connectSim } from '@simarena/viewport';
 import { expand, buildVisualScene } from '@simarena/format';
 import type { SceneDoc } from '@simarena/schema';
 import { buildTree } from './tree.js';
@@ -157,24 +157,33 @@ document.addEventListener('drop', e => {
 
 const wsParam = new URLSearchParams(location.search).get('ws');
 if (wsParam) {
-	const { loadBodies, connectSim, applyTransforms } = await import('@simarena/viewport');
 	const httpBase = wsParam.replace(/^ws(s?):\/\//, 'http$1://').replace(/\/ws$/, '');
 
-	status.textContent = 'Loading…';
+	status.textContent = 'Loading scene…';
 	sceneName.textContent = 'Live Sim';
 	document.title = 'Live Sim — preview';
 	clearScene();
 
-	loadBodies(httpBase, vp.scene, {
-		onProgress: (loaded, total) => { status.textContent = `Loading ${loaded}/${total}…`; }
-	}).then(({ bodies, manifest }) => {
-		const bodyIdx = new Map(manifest.map(b => [b.name, b.id] as [string, number]));
+	try {
+		const [visualRes, bodiesRes] = await Promise.all([
+			fetch(`${httpBase}/scene`),
+			fetch(`${httpBase}/bodies`),
+		]);
+		const visual = await visualRes.json();
+		const { nbody, manifest } = await bodiesRes.json();
+
+		status.textContent = 'Building…';
+		const { bodies } = await buildSceneFromVisual(visual, vp.scene);
+
+		// Flatten to world-space for live transform updates
+		flattenBodies(bodies, vp.scene);
+		const bodyIdx = new Map<string, number>(manifest.map((b: { id: number; name: string }) => [b.name, b.id]));
 
 		let particles: THREE.Points | null = null;
 		let particleGeo: THREE.BufferGeometry | null = null;
 		const particleMat = new THREE.PointsMaterial({ color: 0x3399ff, size: 0.03, transparent: true, opacity: 0.8, sizeAttenuation: true });
 
-		connectSim(wsParam, manifest.length, (xpos, xquat) => {
+		connectSim(wsParam, nbody, (xpos, xquat) => {
 			applyTransforms(xpos, xquat, bodyIdx, bodies);
 		}, {
 			onConnect: () => { status.textContent = '● Connected'; },
@@ -192,5 +201,5 @@ if (wsParam) {
 				}
 			},
 		});
-	}).catch(e => { status.textContent = `Failed: ${e}`; });
+	} catch (e) { status.textContent = `Failed: ${e}`; }
 }

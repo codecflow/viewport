@@ -27,7 +27,11 @@ classifiers = [
     "Typing :: Typed",
 ]
 license = { text = "MIT" }
-dependencies = ["numpy>=1.24.0,<2.4", "trimesh>=4.11.1"]
+dependencies = [
+    "mujoco>=3.3.7",
+    "numpy>=1.24.0,<2.4",
+ "trimesh>=4.11.1",
+]
 
 [project.urls]
 Repository = "https://github.com/simarena/viewport"

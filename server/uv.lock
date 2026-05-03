@@ -2354,9 +2354,10 @@ wheels = [
 
 [[package]]
 name = "viewport"
-version = "0.0.0a1"
+version = "0.0.0a2"
 source = { editable = "." }
 dependencies = [
+    { name = "mujoco" },
     { name = "numpy" },
     { name = "trimesh" },
 ]
@@ -2403,6 +2404,7 @@ requires-dist = [
     { name = "genesis-world", marker = "extra == 'genesis'", git = "https://github.com/Genesis-Embodied-AI/Genesis?rev=5a8928a5e1b3d9e668bb2381ded44ef64357afb2" },
     { name = "gitpython", marker = "extra == 'newton'", specifier = ">=3.1.46" },
     { name = "matplotlib", marker = "extra == 'genesis'", specifier = ">=3.10.8" },
+    { name = "mujoco", specifier = ">=3.3.7" },
     { name = "mujoco", marker = "extra == 'genesis'", specifier = ">=3.2.5" },
     { name = "mujoco", marker = "extra == 'mujoco'", specifier = ">=3.2.5" },
     { name = "mujoco-warp", marker = "extra == 'newton'", specifier = ">=0.0.2" },

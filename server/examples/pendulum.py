@@ -3,7 +3,6 @@ from pathlib import Path
 
 import mujoco
 
-from viewport.mujoco import glb
 from viewport.visualizer import Visualizer
 
 
@@ -13,12 +12,10 @@ def main():
     model = mujoco.MjModel.from_xml_path(str(scene_path))
     data = mujoco.MjData(model)
 
-    # Initial perturbation
     data.qpos[0] = 0.5
     data.qpos[1] = 0.3
 
-    bodies = glb.extract(model)
-    vis = Visualizer(bodies, port=8080)
+    vis = Visualizer(model, port=8080)
     vis.open("http://localhost:5200")
 
     print("Running double pendulum (Ctrl+C to stop)...")

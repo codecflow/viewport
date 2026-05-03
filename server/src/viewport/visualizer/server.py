@@ -12,10 +12,20 @@ from ..mujoco.glb import Body
 
 
 class VisualizerServer:
-    """HTTP + WebSocket server for streaming GLB meshes and transforms."""
+    """HTTP + WebSocket server for streaming VisualScene and transforms."""
 
-    def __init__(self, bodies: list[Body], port: int = 8080):
+    def __init__(
+        self,
+        visual_scene: dict,
+        bodies: list[Body],
+        nbody: int,
+        port: int = 8080,
+        manifest: list[dict] | None = None,
+    ):
+        self.visual_scene = visual_scene
         self.bodies = bodies
+        self.nbody = nbody
+        self._manifest = manifest
         self.port = port
         self.clients: set[WebSocket] = set()
 
@@ -29,23 +39,21 @@ class VisualizerServer:
                 )
             ],
             routes=[
+                Route("/scene", self.serve_scene),
                 Route("/bodies", self.bodies_manifest),
                 Route("/body/{body_id:int}.glb", self.serve_glb),
                 WebSocketRoute("/ws", self.websocket_endpoint),
             ],
         )
 
+    async def serve_scene(self, request):
+        return JSONResponse(self.visual_scene)
+
     async def bodies_manifest(self, request):
-        manifest = [
-            {
-                "id": int(b.id),
-                "name": b.name,
-                "fixed": bool(b.fixed),
-                "size": len(b.glb),
-            }
-            for b in self.bodies
+        manifest = self._manifest if self._manifest is not None else [
+            {"id": int(b.id), "name": b.name} for b in self.bodies
         ]
-        return JSONResponse(manifest)
+        return JSONResponse({"nbody": self.nbody, "manifest": manifest})
 
     async def serve_glb(self, request):
         body_id = int(request.path_params["body_id"])
