@@ -254,12 +254,6 @@ export async function buildSceneFromVisual(visual: VisualScene, scene: THREE.Sce
 	const roots = new Map<string, THREE.Object3D>();
 	const deferred: Array<{ grp: THREE.Group; parentName: string }> = [];
 
-	// Debug: log all bodies and their parent refs
-	const withParent = visual.bodies.filter(b => b.parent);
-	if (withParent.length > 0) {
-		console.log('[builder] bodies with parents:', withParent.map(b => `${b.name} → ${b.parent}`));
-	}
-
 	// Build bodies
 	for (const body of visual.bodies) {
 		const grp = new THREE.Group();

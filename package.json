@@ -5,5 +5,10 @@
     "test": "bun run --filter @simarena/viewport test",
     "preview": "bun run --filter @simarena/preview dev"
   },
-  "workspaces": ["client", "preview"]
+  "workspaces": [
+    "client",
+    "preview",
+    "../format.nosync/schema",
+    "../format.nosync/typescript"
+  ]
 }

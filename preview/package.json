@@ -9,7 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@simarena/format": "0.0.1-alpha.0",
+    "@simarena/format": "workspace:*",
+    "@simarena/schema": "workspace:*",
     "@simarena/viewport": "workspace:*",
     "three": "^0.183.2"
   },

@@ -1,9 +1,22 @@
 import * as THREE from 'three';
-import { createViewport, buildScene, loadBodies, connectSim, applyTransforms } from '@simarena/viewport';
-import { expand } from '@simarena/format';
-import { parseScene } from '@simarena/format';
-import type { AssetDoc } from '@simarena/format';
+import { createViewport, buildSceneFromVisual } from '@simarena/viewport';
+import { expand, buildVisualScene } from '@simarena/format';
+import type { SceneDoc } from '@simarena/schema';
 import { buildTree } from './tree.js';
+
+// ── Test scenes ───────────────────────────────────────────────────────────────
+
+const SCENES = [
+	{ label: 'g1',          url: '/scene/test/g1.scene.json' },
+	{ label: 'panda',       url: '/scene/test/panda.scene.json' },
+	{ label: 'go2',         url: '/scene/test/go2.scene.json' },
+	{ label: 'go1',         url: '/scene/test/go1.scene.json' },
+	{ label: 'so100',       url: '/scene/test/so100.scene.json' },
+	{ label: 'pickplace',   url: '/scene/test/pickplace.scene.json' },
+	{ label: 'dishwasher',  url: '/scene/test/dishwasher.scene.json' },
+	{ label: 'simpletable', url: '/scene/test/simpletable.scene.json' },
+	{ label: 'multi',       url: '/scene/test/multi.scene.json' },
+];
 
 // ── DOM ───────────────────────────────────────────────────────────────────────
 
@@ -13,6 +26,23 @@ const tree = document.getElementById('tree') as HTMLDivElement;
 const sceneName = document.getElementById('scene-name') as HTMLSpanElement;
 const status = document.getElementById('status') as HTMLSpanElement;
 const fileInput = document.getElementById('file-input') as HTMLInputElement;
+const picker = document.getElementById('picker') as HTMLDivElement;
+
+// Build scene picker buttons
+for (const s of SCENES) {
+	const btn = document.createElement('button');
+	btn.className = 'scene-btn';
+	btn.textContent = s.label;
+	btn.addEventListener('click', () => {
+		document.querySelectorAll('.scene-btn').forEach(b => b.classList.remove('active'));
+		btn.classList.add('active');
+		fetch(s.url)
+			.then(r => r.json())
+			.then(raw => load(raw, s.url.substring(0, s.url.lastIndexOf('/') + 1), s.label))
+			.catch(e => { status.textContent = `Fetch failed: ${e}`; });
+	});
+	picker.appendChild(btn);
+}
 
 // ── Viewport setup ────────────────────────────────────────────────────────────
 
@@ -46,19 +76,16 @@ function clearScene() {
 // ── SceneDoc loader ───────────────────────────────────────────────────────────
 
 async function load(raw: unknown, base: string, label: string) {
-	status.textContent = 'Parsing…';
-	const parsed = parseScene(raw);
-	if (!parsed.success) {
-		status.textContent = `Invalid: ${parsed.errors?.[0] ?? 'unknown'}`;
-		return;
-	}
-
 	status.textContent = 'Expanding…';
-	const fetcher = (url: string): Promise<AssetDoc> => fetch(url).then(r => r.json());
+	// Normalize: asset files use "entities[]", scene files use "scene[]"
+	const norm = raw as Record<string, unknown>;
+	if (!norm['scene'] && norm['entities']) norm['scene'] = norm['entities'];
 
-	let doc;
+	const fetcher = (url: string) => fetch(url).then(r => r.json());
+
+	let doc: SceneDoc;
 	try {
-		doc = await expand(parsed.data!, base, fetcher);
+		doc = await expand(norm as unknown as SceneDoc, base, fetcher);
 	} catch (e) {
 		status.textContent = `Expand failed: ${e}`;
 		return;
@@ -68,11 +95,12 @@ async function load(raw: unknown, base: string, label: string) {
 	clearScene();
 
 	try {
-		const { bodies } = await buildScene(doc, vp.scene, base);
+		const visual = buildVisualScene(doc, base);
+		const { bodies } = await buildSceneFromVisual(visual, vp.scene);
 		buildTree(doc, bodies, tree, vp);
-		sceneName.textContent = doc.name;
-		document.title = `${doc.name} — preview`;
-		status.textContent = `${doc.scene?.length ?? 0} entities`;
+		sceneName.textContent = label;
+		document.title = `${label} — preview`;
+		status.textContent = `${visual.bodies.length} bodies`;
 	} catch (e) {
 		status.textContent = `Build failed: ${e}`;
 		console.error(e);
@@ -126,11 +154,10 @@ document.addEventListener('drop', e => {
 });
 
 // ── WebSocket mode: ?ws=ws://host:port/ws ─────────────────────────────────────
-// Connects to a sim server (Python viewport or cloud) streaming body GLBs + transforms.
-// Uses loadBodies + connectSim + applyTransforms from @simarena/viewport.
 
 const wsParam = new URLSearchParams(location.search).get('ws');
 if (wsParam) {
+	const { loadBodies, connectSim, applyTransforms } = await import('@simarena/viewport');
 	const httpBase = wsParam.replace(/^ws(s?):\/\//, 'http$1://').replace(/\/ws$/, '');
 
 	status.textContent = 'Loading…';
@@ -143,7 +170,6 @@ if (wsParam) {
 	}).then(({ bodies, manifest }) => {
 		const bodyIdx = new Map(manifest.map(b => [b.name, b.id] as [string, number]));
 
-		// Particle system (lazy-created on first frame with particles)
 		let particles: THREE.Points | null = null;
 		let particleGeo: THREE.BufferGeometry | null = null;
 		const particleMat = new THREE.PointsMaterial({ color: 0x3399ff, size: 0.03, transparent: true, opacity: 0.8, sizeAttenuation: true });
