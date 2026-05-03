@@ -60,19 +60,17 @@ api_base = f"http://localhost:{PORT}"
 print(f"Extracting {len(franka.vgeoms)} visual geometries...")
 glb_bodies = gglb.extract(franka)
 
-# Cube as inline box primitive (no GLB needed)
-cube_body_desc = {
-    "name": "cube",
-    "pos": [0.65, 0.0, 0.02],
-    "geoms": [{"type": "box", "size": [0.04, 0.04, 0.04], "material": {"color": [0.78, 0.39, 0.2, 1.0]}}],
-}
-visual = gscene.extract(franka, extra_bodies=[cube_body_desc], base_url=api_base)
+# Extract full VisualScene: franka (articulated), cube (rigid box), water (particles)
+visual = gscene.extract(
+    [franka, cube, water],
+    glb_bodies_map={franka: glb_bodies},
+    base_url=api_base,
+)
 
-# Manifest: franka vgeoms (0..N-1) + cube (N) — matches transform stream order
-n_vgeoms = len(franka.vgeoms)
-manifest = [{"id": i, "name": f"vgeom_{i}"} for i in range(n_vgeoms)]
-manifest.append({"id": n_vgeoms, "name": "cube"})
-nbody = n_vgeoms + 1
+# Manifest: body order matches transform stream order (franka vgeoms, then cube)
+rigid_bodies = visual["bodies"]
+nbody = len(rigid_bodies)
+manifest = [{"id": i, "name": b["name"]} for i, b in enumerate(rigid_bodies)]
 
 server = VisualizerServer(visual, glb_bodies, nbody, PORT, manifest=manifest)
 

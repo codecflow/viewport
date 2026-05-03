@@ -83,7 +83,7 @@ def extract(model: mujoco.MjModel, base_url: str = "") -> dict:
         if not geoms:
             continue
 
-        body: dict = {"name": name, "pos": pos, "geoms": geoms}
+        body: dict = {"kind": "rigid", "name": name, "pos": pos, "geoms": geoms}
         if not _identity_quat(quat_raw):
             body["quat"] = [round(float(x), 6) for x in quat_raw]
         bodies.append(body)

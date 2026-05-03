@@ -193,6 +193,7 @@ export class SimScene {
 
 	#createProxies(visual: VisualScene): void {
 		for (const body of visual.bodies) {
+			if (body.kind !== 'rigid') continue;
 			if (this.#bodies.has(body.name)) continue;
 			const grp = new THREE.Group();
 			grp.position.set(...body.pos);

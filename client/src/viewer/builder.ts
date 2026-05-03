@@ -1,7 +1,7 @@
 /**
  * VisualScene → Three.js scene builder.
- * Async: loads mesh files (STL, OBJ) and textures from URLs.
- * No @simarena/format dependency — pure VisualScene → Three.js.
+ * Handles asset table resolution (materials, textures, meshes),
+ * rigid/soft body branching, particles, and environment.
  */
 
 import * as THREE from 'three';
@@ -9,7 +9,10 @@ import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import type { VisualScene, BodyDesc, GeomDesc, LightDesc, MaterialDesc } from './types.js';
+import type {
+	VisualScene, RigidBodyDesc, SoftBodyDesc, GeomDesc,
+	LightDesc, MaterialDesc
+} from './types.js';
 
 // ── Asset caches ──────────────────────────────────────────────────────────────
 
@@ -93,9 +96,33 @@ async function loadTex(url: string): Promise<THREE.Texture> {
 	return tex;
 }
 
+// ── Asset resolution ──────────────────────────────────────────────────────────
+
+/** Resolve geom material — string ref OR inline MaterialDesc. */
+function resolveMat(
+	mat: string | MaterialDesc | undefined,
+	visual: VisualScene
+): MaterialDesc | undefined {
+	if (mat === undefined) return undefined;
+	if (typeof mat === 'string') return visual.materials?.[mat];
+	return mat;
+}
+
+/** Resolve geom mesh URL — name ref → meshes table → URL, or direct meshUrl. */
+function resolveMeshUrl(geom: GeomDesc, visual: VisualScene): string | undefined {
+	if (geom.mesh) return visual.meshes?.[geom.mesh];
+	return geom.meshUrl;
+}
+
+/** Resolve texture URL from materials table entry. */
+function resolveTexUrl(mat: MaterialDesc | undefined, visual: VisualScene): string | undefined {
+	if (!mat?.texture) return undefined;
+	return visual.textures?.[mat.texture] ?? mat.texture;
+}
+
 // ── Material + geometry builders ──────────────────────────────────────────────
 
-function buildMat(desc?: MaterialDesc): THREE.MeshStandardMaterial {
+function buildMat(desc: MaterialDesc | undefined): THREE.MeshStandardMaterial {
 	const c = desc?.color;
 	const a = c ? c[3] ?? 1 : 1;
 	return new THREE.MeshStandardMaterial({
@@ -107,10 +134,10 @@ function buildMat(desc?: MaterialDesc): THREE.MeshStandardMaterial {
 	});
 }
 
-async function applyTexture(mat: THREE.MeshStandardMaterial, mapUrl?: string): Promise<void> {
-	if (!mapUrl) return;
+async function applyTexture(mat: THREE.MeshStandardMaterial, texUrl?: string): Promise<void> {
+	if (!texUrl) return;
 	try {
-		mat.map = await loadTex(mapUrl);
+		mat.map = await loadTex(texUrl);
 		mat.color.set(0xffffff);
 		mat.needsUpdate = true;
 	} catch { /* skip */ }
@@ -120,10 +147,7 @@ function buildGeo(geom: GeomDesc): THREE.BufferGeometry | null {
 	const s = geom.size;
 	switch (geom.type) {
 		case 'box': return new THREE.BoxGeometry(s[0] ?? 1, s[1] ?? 1, s[2] ?? 1);
-		case 'sphere': {
-			const r = s[0] ?? 0.5;
-			return new THREE.SphereGeometry(r, 32, 32);
-		}
+		case 'sphere': return new THREE.SphereGeometry(s[0] ?? 0.5, 32, 32);
 		case 'cylinder': {
 			const geo = new THREE.CylinderGeometry(s[0] ?? 0.1, s[0] ?? 0.1, s[1] ?? 0.5, 32);
 			geo.rotateX(Math.PI / 2);
@@ -153,18 +177,19 @@ function applyTransform(obj: THREE.Object3D, geom: GeomDesc): void {
 	}
 }
 
-async function buildGeomObject(geom: GeomDesc, parent: THREE.Group): Promise<void> {
-	if (geom.type === 'mesh' && geom.meshUrl) {
+async function buildGeomObject(geom: GeomDesc, parent: THREE.Group, visual: VisualScene): Promise<void> {
+	const meshUrl = resolveMeshUrl(geom, visual);
+	if (geom.type === 'mesh' && meshUrl) {
+		const mat = buildMat(resolveMat(geom.material, visual));
+		await applyTexture(mat, resolveTexUrl(resolveMat(geom.material, visual), visual));
 		try {
-			if (/\.(glb|gltf)$/i.test(geom.meshUrl)) {
-				const grp = await loadGLTFGroup(geom.meshUrl);
+			if (/\.(glb|gltf)$/i.test(meshUrl)) {
+				const grp = await loadGLTFGroup(meshUrl);
 				applyTransform(grp, geom);
 				parent.add(grp);
-			} else if (/\.(obj|OBJ)$/.test(geom.meshUrl)) {
-				const grp = await loadOBJGroup(geom.meshUrl);
+			} else if (/\.(obj|OBJ)$/.test(meshUrl)) {
+				const grp = await loadOBJGroup(meshUrl);
 				if (geom.material) {
-					const mat = buildMat(geom.material);
-					await applyTexture(mat, geom.material.mapUrl);
 					grp.traverse((c) => {
 						if (c instanceof THREE.Mesh) { c.material = mat.clone(); c.castShadow = true; c.receiveShadow = true; }
 					});
@@ -176,20 +201,19 @@ async function buildGeomObject(geom: GeomDesc, parent: THREE.Group): Promise<voi
 				applyTransform(grp, geom);
 				parent.add(grp);
 			} else {
-				const mat = buildMat(geom.material);
-				await applyTexture(mat, geom.material?.mapUrl);
-				const geo = await loadSTL(geom.meshUrl);
+				const geo = await loadSTL(meshUrl);
 				const mesh = new THREE.Mesh(geo, mat);
 				mesh.castShadow = true; mesh.receiveShadow = true;
 				applyTransform(mesh, geom);
 				parent.add(mesh);
 			}
-		} catch (e) { console.error(`[builder] mesh load failed: ${geom.meshUrl}`, e); }
+		} catch (e) { console.error(`[builder] mesh load failed: ${meshUrl}`, e); }
 	} else {
 		const geo = buildGeo(geom);
 		if (!geo) return;
-		const mat = buildMat(geom.material);
-		await applyTexture(mat, geom.material?.mapUrl);
+		const matDesc = resolveMat(geom.material, visual);
+		const mat = buildMat(matDesc);
+		await applyTexture(mat, resolveTexUrl(matDesc, visual));
 		geo.computeVertexNormals();
 		const mesh = new THREE.Mesh(geo, mat);
 		mesh.castShadow = true; mesh.receiveShadow = true;
@@ -234,23 +258,19 @@ function buildLight(desc: LightDesc): THREE.Light | null {
 
 /**
  * Synchronously build a Three.js mesh from a primitive GeomDesc.
- * Returns null for 'mesh' type (use buildGeomMesh for async mesh loading).
+ * Returns null for 'mesh' type (use buildGeomMesh for async loading).
  */
 export function createPrimitiveMesh(geom: GeomDesc): THREE.Mesh | null {
 	if (geom.type === 'mesh') return null;
 	const geo = buildGeo(geom);
 	if (!geo) return null;
 	geo.computeVertexNormals();
-	const mat = buildMat(geom.material);
-	const mesh = new THREE.Mesh(geo, mat);
+	const mesh = new THREE.Mesh(geo, buildMat(typeof geom.material === 'object' ? geom.material : undefined));
 	mesh.castShadow = true;
 	mesh.receiveShadow = true;
 	return mesh;
 }
 
-/**
- * Create a Three.js Light from a LightDesc.
- */
 export function createLightFromDesc(desc: LightDesc): THREE.Light | null {
 	return buildLight(desc);
 }
@@ -258,44 +278,83 @@ export function createLightFromDesc(desc: LightDesc): THREE.Light | null {
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export interface BuiltScene {
-	/** All entity objects keyed by name — use for body tracking, selection, etc. */
+	/** All rigid body objects keyed by name. */
 	bodies: Map<string, THREE.Object3D>;
-	/** Root entities only (no parent relation) */
+	/** Root rigid bodies only (no parent). */
 	entityRoots: Map<string, THREE.Object3D>;
+	/** Particle point clouds keyed by name — update positions per frame. */
+	particles: Map<string, THREE.Points>;
+	/** Soft body meshes keyed by name — update vertex positions per frame. */
+	softBodies: Map<string, THREE.Mesh>;
 }
 
 /**
  * Build a Three.js scene from a VisualScene.
- * Loads mesh files and textures asynchronously.
+ * Resolves asset table references, handles rigid/soft bodies, particles, and environment.
  */
 export async function buildSceneFromVisual(visual: VisualScene, scene: THREE.Scene): Promise<BuiltScene> {
 	const bodies = new Map<string, THREE.Object3D>();
 	const roots = new Map<string, THREE.Object3D>();
+	const particlesMap = new Map<string, THREE.Points>();
+	const softBodiesMap = new Map<string, THREE.Mesh>();
 	const deferred: Array<{ grp: THREE.Group; parentName: string }> = [];
 
-	// Build bodies
-	for (const body of visual.bodies) {
-		const grp = new THREE.Group();
-		grp.name = body.name;
-		grp.position.set(...body.pos);
-		if (body.quat) {
-			const [w, x, y, z] = body.quat;
-			grp.quaternion.set(x, y, z, w).normalize();
-		} else if (body.rot) {
-			const D = Math.PI / 180;
-			grp.rotation.set(body.rot[0] * D, body.rot[1] * D, body.rot[2] * D);
+	// ── Apply environment ──────────────────────────────────────────────────────
+	if (visual.environment) {
+		const env = visual.environment;
+		if (env.background) {
+			if (Array.isArray(env.background)) {
+				scene.background = new THREE.Color(env.background[0], env.background[1], env.background[2]);
+			} else {
+				scene.background = new THREE.Color(env.background);
+			}
 		}
-		bodies.set(body.name, grp);
-		if (body.parent) {
-			deferred.push({ grp, parentName: body.parent });
-		} else {
-			scene.add(grp);
-			roots.set(body.name, grp);
+		if (env.fog) {
+			const f = env.fog;
+			scene.fog = new THREE.Fog(new THREE.Color(f.color[0], f.color[1], f.color[2]), f.near, f.far);
 		}
-		for (const geom of body.geoms) await buildGeomObject(geom, grp);
 	}
 
-	// Resolve hierarchy
+	// ── Build bodies ───────────────────────────────────────────────────────────
+	for (const body of visual.bodies) {
+		if (body.kind === 'rigid') {
+			const grp = new THREE.Group();
+			grp.name = body.name;
+			grp.position.set(...body.pos);
+			if (body.quat) {
+				const [w, x, y, z] = body.quat;
+				grp.quaternion.set(x, y, z, w).normalize();
+			} else if (body.rot) {
+				const D = Math.PI / 180;
+				grp.rotation.set(body.rot[0] * D, body.rot[1] * D, body.rot[2] * D);
+			}
+			bodies.set(body.name, grp);
+			if (body.parent) {
+				deferred.push({ grp, parentName: body.parent });
+			} else {
+				scene.add(grp);
+				roots.set(body.name, grp);
+			}
+			for (const geom of body.geoms) await buildGeomObject(geom, grp, visual);
+
+		} else if (body.kind === 'soft') {
+			const geo = new THREE.BufferGeometry();
+			const positions = new Float32Array(body.vertexCount * 3);
+			geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+			geo.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(body.vertexCount * 3), 3));
+			if (body.indices) geo.setIndex(body.indices);
+			const matDesc = resolveMat(body.material, visual);
+			const mat = buildMat(matDesc);
+			if (body.doubleSided) mat.side = THREE.DoubleSide;
+			const mesh = new THREE.Mesh(geo, mat);
+			mesh.name = body.name;
+			mesh.frustumCulled = false;
+			scene.add(mesh);
+			softBodiesMap.set(body.name, mesh);
+		}
+	}
+
+	// ── Resolve rigid body hierarchy ───────────────────────────────────────────
 	const allNames = [...bodies.keys()];
 	for (const { grp, parentName } of deferred) {
 		const parent = bodies.get(parentName);
@@ -308,7 +367,7 @@ export async function buildSceneFromVisual(visual: VisualScene, scene: THREE.Sce
 		}
 	}
 
-	// Build lights
+	// ── Build lights ───────────────────────────────────────────────────────────
 	for (const desc of visual.lights) {
 		const light = buildLight(desc);
 		if (!light) continue;
@@ -316,20 +375,42 @@ export async function buildSceneFromVisual(visual: VisualScene, scene: THREE.Sce
 		scene.add(light);
 	}
 
-	return { bodies, entityRoots: roots };
+	// ── Build particle systems ─────────────────────────────────────────────────
+	for (const pd of visual.particles ?? []) {
+		const geo = new THREE.BufferGeometry();
+		geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(0), 3));
+		const matDesc = resolveMat(pd.material, visual);
+		const c = matDesc?.color ?? [0.2, 0.6, 0.95, 0.8];
+		const ptsMat = new THREE.PointsMaterial({
+			color: new THREE.Color(c[0], c[1], c[2]),
+			size: pd.size ?? 0.03,
+			transparent: (c[3] ?? 1) < 1,
+			opacity: c[3] ?? 1,
+			sizeAttenuation: pd.sizeAttenuation ?? true,
+		});
+		const pts = new THREE.Points(geo, ptsMat);
+		pts.name = pd.name;
+		pts.frustumCulled = false;
+		scene.add(pts);
+		particlesMap.set(pd.name, pts);
+	}
+
+	return { bodies, entityRoots: roots, particles: particlesMap, softBodies: softBodiesMap };
 }
 
 /**
  * Build a single Three.js mesh from a GeomDesc.
  * Useful for editor live-preview of individual geoms.
  */
-export async function buildGeomMesh(geom: GeomDesc): Promise<THREE.Mesh | null> {
+export async function buildGeomMesh(geom: GeomDesc, visual: VisualScene = { bodies: [], lights: [], cameras: [], sensors: [] }): Promise<THREE.Mesh | null> {
+	const meshUrl = resolveMeshUrl(geom, visual);
 	if (geom.type === 'mesh') {
-		if (!geom.meshUrl) return null;
-		const mat = buildMat(geom.material);
-		await applyTexture(mat, geom.material?.mapUrl);
+		if (!meshUrl) return null;
+		const matDesc = resolveMat(geom.material, visual);
+		const mat = buildMat(matDesc);
+		await applyTexture(mat, resolveTexUrl(matDesc, visual));
 		try {
-			const geo = await loadSTL(geom.meshUrl);
+			const geo = await loadSTL(meshUrl);
 			const mesh = new THREE.Mesh(geo, mat);
 			mesh.castShadow = true; mesh.receiveShadow = true;
 			return mesh;
@@ -338,8 +419,9 @@ export async function buildGeomMesh(geom: GeomDesc): Promise<THREE.Mesh | null> 
 	const geo = buildGeo(geom);
 	if (!geo) return null;
 	geo.computeVertexNormals();
-	const mat = buildMat(geom.material);
-	await applyTexture(mat, geom.material?.mapUrl);
+	const matDesc = resolveMat(geom.material, visual);
+	const mat = buildMat(matDesc);
+	await applyTexture(mat, resolveTexUrl(matDesc, visual));
 	const mesh = new THREE.Mesh(geo, mat);
 	mesh.castShadow = true; mesh.receiveShadow = true;
 	return mesh;

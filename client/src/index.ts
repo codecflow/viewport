@@ -13,7 +13,12 @@ export type { LidarScanConfig, ScanPattern } from './sensors/index.js';
 export { buildDirs, dirs2D, dirs3D, dirsLivox, dirsFlash } from './sensors/index.js';
 export { ContactViz } from './sensors/index.js';
 
-export type { GeomDesc, BodyDesc, SensorDesc, SimCamera, VisualScene, MaterialDesc, LightDesc, LightType } from './viewer/types.js';
+export type {
+	GeomDesc, BodyDesc, RigidBodyDesc, SoftBodyDesc,
+	SensorDesc, SimCamera, VisualScene,
+	MaterialDesc, LightDesc, LightType,
+	ParticleDesc, EnvironmentDesc
+} from './viewer/types.js';
 
 export { SimScene as SimRenderer } from './viewer/scene.js';
 export type { VizState } from './viewer/scene.js';
