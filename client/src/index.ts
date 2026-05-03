@@ -14,10 +14,10 @@ export { buildDirs, dirs2D, dirs3D, dirsLivox, dirsFlash } from './sensors/index
 export { ContactViz } from './sensors/index.js';
 
 export type {
-	GeomDesc, BodyDesc, RigidBodyDesc, SoftBodyDesc,
+	GeomDesc, BodyDesc, RigidBodyDesc, SoftBodyDesc, SkinnedBodyDesc, InstancedBodyDesc,
 	SensorDesc, SimCamera, VisualScene,
 	MaterialDesc, LightDesc, LightType,
-	ParticleDesc, EnvironmentDesc
+	ParticleDesc, GaussianSplatDesc, EnvironmentDesc
 } from './viewer/types.js';
 
 export { SimScene as SimRenderer } from './viewer/scene.js';

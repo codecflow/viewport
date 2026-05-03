@@ -10,7 +10,7 @@ import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import type {
-	VisualScene, RigidBodyDesc, SoftBodyDesc, GeomDesc,
+	VisualScene, RigidBodyDesc, SoftBodyDesc, SkinnedBodyDesc, InstancedBodyDesc, GeomDesc,
 	LightDesc, MaterialDesc
 } from './types.js';
 
@@ -286,6 +286,16 @@ export interface BuiltScene {
 	particles: Map<string, THREE.Points>;
 	/** Soft body meshes keyed by name — update vertex positions per frame. */
 	softBodies: Map<string, THREE.Mesh>;
+	/**
+	 * Skinned meshes keyed by name — update bone transforms per frame.
+	 * Requires @sparkjsdev/spark or Three.js SkinnedMesh support.
+	 */
+	skinnedBodies: Map<string, THREE.SkinnedMesh>;
+	/**
+	 * Instanced meshes keyed by name — update instanceMatrix per frame.
+	 * One draw call for all instances.
+	 */
+	instancedBodies: Map<string, THREE.InstancedMesh>;
 }
 
 /**
@@ -297,6 +307,8 @@ export async function buildSceneFromVisual(visual: VisualScene, scene: THREE.Sce
 	const roots = new Map<string, THREE.Object3D>();
 	const particlesMap = new Map<string, THREE.Points>();
 	const softBodiesMap = new Map<string, THREE.Mesh>();
+	const skinnedBodiesMap = new Map<string, THREE.SkinnedMesh>();
+	const instancedBodiesMap = new Map<string, THREE.InstancedMesh>();
 	const deferred: Array<{ grp: THREE.Group; parentName: string }> = [];
 
 	// ── Apply environment ──────────────────────────────────────────────────────
@@ -395,7 +407,13 @@ export async function buildSceneFromVisual(visual: VisualScene, scene: THREE.Sce
 		particlesMap.set(pd.name, pts);
 	}
 
-	return { bodies, entityRoots: roots, particles: particlesMap, softBodies: softBodiesMap };
+	return {
+		bodies, entityRoots: roots,
+		particles: particlesMap,
+		softBodies: softBodiesMap,
+		skinnedBodies: skinnedBodiesMap,
+		instancedBodies: instancedBodiesMap,
+	};
 }
 
 /**

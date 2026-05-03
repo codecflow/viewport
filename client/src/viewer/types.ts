@@ -65,7 +65,31 @@ export interface SoftBodyDesc {
     doubleSided?: boolean;
 }
 
-export type BodyDesc = RigidBodyDesc | SoftBodyDesc;
+/** Bone-driven mesh — GPU skeletal animation. One draw call; efficient for articulated robots. */
+export interface SkinnedBodyDesc {
+    kind: 'skinned';
+    name: string;
+    /** GLB with embedded skeleton and skin weights. */
+    mesh?: string;
+    meshUrl?: string;
+    /** Number of bones — pre-allocate bone transform buffer. */
+    boneCount: number;
+    material?: string | MaterialDesc;
+}
+
+/** GPU-instanced copies of the same shape. One draw call for `count` copies. */
+export interface InstancedBodyDesc {
+    kind: 'instanced';
+    name: string;
+    /** Number of instances. */
+    count: number;
+    /** Shared geometry for all instances. */
+    geom: GeomDesc;
+    /** Per-instance color overrides (optional). */
+    colors?: [number, number, number, number][];
+}
+
+export type BodyDesc = RigidBodyDesc | SoftBodyDesc | SkinnedBodyDesc | InstancedBodyDesc;
 
 // ── Lights ────────────────────────────────────────────────────────────────────
 
@@ -118,6 +142,24 @@ export interface ParticleDesc {
     sizeAttenuation?: boolean;
 }
 
+// ── Gaussian Splats ───────────────────────────────────────────────────────────
+
+/**
+ * 3D Gaussian Splat scene — photorealistic environments from NeRF/3DGS reconstruction.
+ * Rendered via @sparkjsdev/spark (Three.js-integrated Gaussian rasterizer).
+ * Splat data is loaded from a .ply, .splat, or .spz file.
+ */
+export interface GaussianSplatDesc {
+    name: string;
+    /** URL to .ply / .splat / .spz file. */
+    url?: string;
+    /** Name ref to meshes table. */
+    splat?: string;
+    pos?: [number, number, number];
+    quat?: [number, number, number, number];
+    scale?: number;
+}
+
 // ── Environment ───────────────────────────────────────────────────────────────
 
 export interface EnvironmentDesc {
@@ -145,5 +187,7 @@ export interface VisualScene {
     sensors: SensorDesc[];
     /** Per-frame point cloud channels (particles, fluid, granular). */
     particles?: ParticleDesc[];
+    /** Gaussian Splat environments — loaded via @sparkjsdev/spark. */
+    splats?: GaussianSplatDesc[];
     environment?: EnvironmentDesc;
 }
