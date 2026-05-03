@@ -22,7 +22,6 @@
     "url": "https://github.com/simarena/viewport"
   },
   "dependencies": {
-    "@simarena/format": "0.0.1-alpha.0",
     "three": "^0.183.2"
   },
   "devDependencies": {

@@ -4,8 +4,8 @@
  * No raycasting — pure display component.
  */
 import * as THREE from 'three';
-import type { LidarScanConfig, ScanPattern } from '@simarena/format';
-import { buildDirs } from '@simarena/format';
+import type { LidarScanConfig, ScanPattern } from './directions.js';
+import { buildDirs } from './directions.js';
 
 export type { LidarScanConfig, ScanPattern };
 
@@ -61,7 +61,7 @@ export class LidarViz {
 
 		for (let i = 0; i < Math.min(this.n, dists.length); i++) {
 			const d = dists[i] ?? this.range;
-			const dx = this.dirs[i * 3], dy = this.dirs[i * 3 + 1], dz = this.dirs[i * 3 + 2];
+			const dx = this.dirs[i * 3] ?? 0, dy = this.dirs[i * 3 + 1] ?? 0, dz = this.dirs[i * 3 + 2] ?? 0;
 			const hx = origin.x + dx * d, hy = origin.y + dy * d, hz = origin.z + dz * d;
 
 			if (this.pattern === '2d') {
