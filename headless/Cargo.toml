@@ -1,0 +1,15 @@
+[package]
+name = "simarena-headless"
+version = "0.1.0"
+edition = "2021"
+description = "Headless wgpu renderer for VisualScene — proof of concept"
+
+[dependencies]
+wgpu = "22"
+bytemuck = { version = "1", features = ["derive"] }
+glam = "0.28"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+image = { version = "0.25", default-features = false, features = ["png"] }
+clap = { version = "4", features = ["derive"] }
+pollster = "0.3"
