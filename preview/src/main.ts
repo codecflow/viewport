@@ -1,47 +1,55 @@
-import * as THREE from 'three';
-import { createViewport, buildSceneFromVisual, flattenBodies, applyTransforms, connectSim } from '@simarena/viewport';
-import { expand, buildVisualScene } from '@simarena/format';
-import type { SceneDoc } from '@simarena/schema';
-import { buildTree } from './tree.js';
+import * as THREE from "three";
+import {
+  createViewport,
+  buildSceneFromVisual,
+  flattenBodies,
+  applyTransforms,
+  connectSim,
+} from "@simarena/viewport";
+import { expand, buildVisualScene } from "@simarena/format";
+import type { Scene } from "@simarena/schema";
+import { buildTree } from "./tree.js";
 
 // ── Test scenes ───────────────────────────────────────────────────────────────
 
 const SCENES = [
-	{ label: 'g1',          url: '/scene/test/g1.scene.json' },
-	{ label: 'panda',       url: '/scene/test/panda.scene.json' },
-	{ label: 'go2',         url: '/scene/test/go2.scene.json' },
-	{ label: 'go1',         url: '/scene/test/go1.scene.json' },
-	{ label: 'so100',       url: '/scene/test/so100.scene.json' },
-	{ label: 'pickplace',   url: '/scene/test/pickplace.scene.json' },
-	{ label: 'dishwasher',  url: '/scene/test/dishwasher.scene.json' },
-	{ label: 'simpletable', url: '/scene/test/simpletable.scene.json' },
-	{ label: 'multi',       url: '/scene/test/multi.scene.json' },
+  { label: "g1", url: "/scene/test/g1.scene.json" },
+  { label: "panda", url: "/scene/test/panda.scene.json" },
+  { label: "go2", url: "/scene/test/go2.scene.json" },
+  { label: "go1", url: "/scene/test/go1.scene.json" },
+  { label: "so100", url: "/scene/test/so100.scene.json" },
+  { label: "pickplace", url: "/scene/test/pickplace.scene.json" },
+  { label: "dishwasher", url: "/scene/test/dishwasher.scene.json" },
+  { label: "simpletable", url: "/scene/test/simpletable.scene.json" },
+  { label: "multi", url: "/scene/test/multi.scene.json" },
 ];
 
 // ── DOM ───────────────────────────────────────────────────────────────────────
 
-const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-const viewport = document.getElementById('viewport') as HTMLDivElement;
-const tree = document.getElementById('tree') as HTMLDivElement;
-const sceneName = document.getElementById('scene-name') as HTMLSpanElement;
-const status = document.getElementById('status') as HTMLSpanElement;
-const fileInput = document.getElementById('file-input') as HTMLInputElement;
-const picker = document.getElementById('picker') as HTMLDivElement;
+const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+const viewport = document.getElementById("viewport") as HTMLDivElement;
+const tree = document.getElementById("tree") as HTMLDivElement;
+const sceneName = document.getElementById("scene-name") as HTMLSpanElement;
+const status = document.getElementById("status") as HTMLSpanElement;
+const fileInput = document.getElementById("file-input") as HTMLInputElement;
+const picker = document.getElementById("picker") as HTMLDivElement;
 
 // Build scene picker buttons
 for (const s of SCENES) {
-	const btn = document.createElement('button');
-	btn.className = 'scene-btn';
-	btn.textContent = s.label;
-	btn.addEventListener('click', () => {
-		document.querySelectorAll('.scene-btn').forEach(b => b.classList.remove('active'));
-		btn.classList.add('active');
-		fetch(s.url)
-			.then(r => r.json())
-			.then(raw => load(raw, s.url.substring(0, s.url.lastIndexOf('/') + 1), s.label))
-			.catch(e => { status.textContent = `Fetch failed: ${e}`; });
-	});
-	picker.appendChild(btn);
+  const btn = document.createElement("button");
+  btn.className = "scene-btn";
+  btn.textContent = s.label;
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".scene-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    fetch(s.url)
+      .then((r) => r.json())
+      .then((raw) => load(raw, s.url.substring(0, s.url.lastIndexOf("/") + 1), s.label))
+      .catch((e) => {
+        status.textContent = `Fetch failed: ${e}`;
+      });
+  });
+  picker.appendChild(btn);
 }
 
 // ── Viewport setup ────────────────────────────────────────────────────────────
@@ -58,9 +66,9 @@ sun.castShadow = true;
 vp.scene.add(sun);
 
 (function loop() {
-	requestAnimationFrame(loop);
-	vp.orbit.update();
-	vp.renderer.render(vp.scene, vp.camera);
+  requestAnimationFrame(loop);
+  vp.orbit.update();
+  vp.renderer.render(vp.scene, vp.camera);
 })();
 
 // ── Scene tracking ────────────────────────────────────────────────────────────
@@ -68,138 +76,168 @@ vp.scene.add(sun);
 const permanent = new Set<THREE.Object3D>(vp.scene.children);
 
 function clearScene() {
-	for (const obj of [...vp.scene.children]) {
-		if (!permanent.has(obj)) vp.scene.remove(obj);
-	}
+  for (const obj of vp.scene.children) {
+    if (!permanent.has(obj)) vp.scene.remove(obj);
+  }
 }
 
-// ── SceneDoc loader ───────────────────────────────────────────────────────────
+// ── Scene loader ───────────────────────────────────────────────────────────
 
 async function load(raw: unknown, base: string, label: string) {
-	status.textContent = 'Expanding…';
-	// Normalize: asset files use "entities[]", scene files use "scene[]"
-	const norm = raw as Record<string, unknown>;
-	if (!norm['scene'] && norm['entities']) norm['scene'] = norm['entities'];
+  status.textContent = "Expanding…";
+  // Normalize: asset files use "entities[]", scene files use "scene[]"
+  const norm = raw as Record<string, unknown>;
+  if (!norm["scene"] && norm["entities"]) norm["scene"] = norm["entities"];
 
-	const fetcher = (url: string) => fetch(url).then(r => r.json());
+  const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-	let doc: SceneDoc;
-	try {
-		doc = await expand(norm as unknown as SceneDoc, base, fetcher);
-	} catch (e) {
-		status.textContent = `Expand failed: ${e}`;
-		return;
-	}
+  let doc: Scene;
+  try {
+    doc = await expand(norm as unknown as Scene, base, fetcher);
+  } catch (e) {
+    status.textContent = `Expand failed: ${e}`;
+    return;
+  }
 
-	status.textContent = 'Building…';
-	clearScene();
+  status.textContent = "Building…";
+  clearScene();
 
-	try {
-		const visual = buildVisualScene(doc, base);
-		const { bodies } = await buildSceneFromVisual(visual, vp.scene);
-		buildTree(doc, bodies, tree, vp);
-		sceneName.textContent = label;
-		document.title = `${label} — preview`;
-		status.textContent = `${visual.bodies.length} bodies`;
-	} catch (e) {
-		status.textContent = `Build failed: ${e}`;
-		console.error(e);
-	}
+  try {
+    const visual = buildVisualScene(doc, base);
+    const { bodies } = await buildSceneFromVisual(visual, vp.scene);
+    buildTree(doc, bodies, tree, vp);
+    sceneName.textContent = label;
+    document.title = `${label} — preview`;
+    status.textContent = `${visual.bodies.length} bodies`;
+  } catch (e) {
+    status.textContent = `Build failed: ${e}`;
+    console.error(e);
+  }
 }
 
 // ── URL param: ?url=... ───────────────────────────────────────────────────────
 
-const urlParam = new URLSearchParams(location.search).get('url');
+const urlParam = new URLSearchParams(location.search).get("url");
 if (urlParam) {
-	const base = urlParam.substring(0, urlParam.lastIndexOf('/') + 1);
-	fetch(urlParam)
-		.then(r => r.json())
-		.then(raw => load(raw, base, urlParam))
-		.catch(e => { status.textContent = `Fetch failed: ${e}`; });
+  const base = urlParam.substring(0, urlParam.lastIndexOf("/") + 1);
+  fetch(urlParam)
+    .then((r) => r.json())
+    .then((raw) => load(raw, base, urlParam))
+    .catch((e) => {
+      status.textContent = `Fetch failed: ${e}`;
+    });
 }
 
 // ── File input ────────────────────────────────────────────────────────────────
 
-fileInput.addEventListener('change', () => {
-	const file = fileInput.files?.[0];
-	if (!file) return;
-	const reader = new FileReader();
-	reader.onload = () => {
-		const raw = JSON.parse(reader.result as string);
-		load(raw, '', file.name);
-	};
-	reader.readAsText(file);
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const raw = JSON.parse(reader.result as string);
+    load(raw, "", file.name);
+  };
+  reader.readAsText(file);
 });
 
 // ── Drag & drop ───────────────────────────────────────────────────────────────
 
-const dragOverlay = document.createElement('div');
-dragOverlay.id = 'drag-overlay';
-dragOverlay.textContent = 'Drop .scene.json here';
+const dragOverlay = document.createElement("div");
+dragOverlay.id = "drag-overlay";
+dragOverlay.textContent = "Drop .scene.json here";
 viewport.appendChild(dragOverlay);
 
-document.addEventListener('dragover', e => { e.preventDefault(); dragOverlay.classList.add('active'); });
-document.addEventListener('dragleave', e => { if (!e.relatedTarget) dragOverlay.classList.remove('active'); });
-document.addEventListener('drop', e => {
-	e.preventDefault();
-	dragOverlay.classList.remove('active');
-	const file = e.dataTransfer?.files[0];
-	if (!file?.name.endsWith('.json')) return;
-	const reader = new FileReader();
-	reader.onload = () => {
-		const raw = JSON.parse(reader.result as string);
-		load(raw, '', file.name);
-	};
-	reader.readAsText(file);
+document.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dragOverlay.classList.add("active");
+});
+document.addEventListener("dragleave", (e) => {
+  if (!e.relatedTarget) dragOverlay.classList.remove("active");
+});
+document.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dragOverlay.classList.remove("active");
+  const file = e.dataTransfer?.files[0];
+  if (!file?.name.endsWith(".json")) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const raw = JSON.parse(reader.result as string);
+    load(raw, "", file.name);
+  };
+  reader.readAsText(file);
 });
 
 // ── WebSocket mode: ?ws=ws://host:port/ws ─────────────────────────────────────
 
-const wsParam = new URLSearchParams(location.search).get('ws');
+const wsParam = new URLSearchParams(location.search).get("ws");
 if (wsParam) {
-	const httpBase = wsParam.replace(/^ws(s?):\/\//, 'http$1://').replace(/\/ws$/, '');
+  const httpBase = wsParam.replace(/^ws(s?):\/\//, "http$1://").replace(/\/ws$/, "");
 
-	status.textContent = 'Loading scene…';
-	sceneName.textContent = 'Live Sim';
-	document.title = 'Live Sim — preview';
-	clearScene();
+  status.textContent = "Loading scene…";
+  sceneName.textContent = "Live Sim";
+  document.title = "Live Sim — preview";
+  clearScene();
 
-	try {
-		const [visualRes, bodiesRes] = await Promise.all([
-			fetch(`${httpBase}/scene`),
-			fetch(`${httpBase}/bodies`),
-		]);
-		const visual = await visualRes.json();
-		const { nbody, manifest } = await bodiesRes.json();
+  try {
+    const [visualRes, bodiesRes] = await Promise.all([
+      fetch(`${httpBase}/scene`),
+      fetch(`${httpBase}/bodies`),
+    ]);
+    const visual = await visualRes.json();
+    const { nbody, manifest } = await bodiesRes.json();
 
-		status.textContent = 'Building…';
-		const { bodies } = await buildSceneFromVisual(visual, vp.scene);
+    status.textContent = "Building…";
+    const { bodies } = await buildSceneFromVisual(visual, vp.scene);
 
-		// Flatten to world-space for live transform updates
-		flattenBodies(bodies, vp.scene);
-		const bodyIdx = new Map<string, number>(manifest.map((b: { id: number; name: string }) => [b.name, b.id]));
+    // Flatten to world-space for live transform updates
+    flattenBodies(bodies, vp.scene);
+    const bodyIdx = new Map<string, number>(
+      manifest.map((b: { id: number; name: string }) => [b.name, b.id]),
+    );
 
-		let particles: THREE.Points | null = null;
-		let particleGeo: THREE.BufferGeometry | null = null;
-		const particleMat = new THREE.PointsMaterial({ color: 0x3399ff, size: 0.03, transparent: true, opacity: 0.8, sizeAttenuation: true });
+    let particles: THREE.Points | null = null;
+    let particleGeo: THREE.BufferGeometry | null = null;
+    const particleMat = new THREE.PointsMaterial({
+      color: 0x3399ff,
+      size: 0.03,
+      transparent: true,
+      opacity: 0.8,
+      sizeAttenuation: true,
+    });
 
-		connectSim(wsParam, nbody, (xpos, xquat) => {
-			applyTransforms(xpos, xquat, bodyIdx, bodies);
-		}, {
-			onConnect: () => { status.textContent = '● Connected'; },
-			onFps: fps => { status.textContent = `● ${fps} fps`; },
-			onError: msg => { status.textContent = `✗ ${msg}`; },
-			onClose: () => { status.textContent = '✗ Disconnected'; },
-			onParticles: (positions) => {
-				if (particles && particleGeo) {
-					particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-				} else {
-					particleGeo = new THREE.BufferGeometry();
-					particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-					particles = new THREE.Points(particleGeo, particleMat);
-					vp.scene.add(particles);
-				}
-			},
-		});
-	} catch (e) { status.textContent = `Failed: ${e}`; }
+    connectSim(
+      wsParam,
+      nbody,
+      (xpos, xquat) => {
+        applyTransforms(xpos, xquat, bodyIdx, bodies);
+      },
+      {
+        onConnect: () => {
+          status.textContent = "● Connected";
+        },
+        onFps: (fps) => {
+          status.textContent = `● ${fps} fps`;
+        },
+        onError: (msg) => {
+          status.textContent = `✗ ${msg}`;
+        },
+        onClose: () => {
+          status.textContent = "✗ Disconnected";
+        },
+        onParticles: (positions) => {
+          if (particles && particleGeo) {
+            particleGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+          } else {
+            particleGeo = new THREE.BufferGeometry();
+            particleGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+            particles = new THREE.Points(particleGeo, particleMat);
+            vp.scene.add(particles);
+          }
+        },
+      },
+    );
+  } catch (e) {
+    status.textContent = `Failed: ${e}`;
+  }
 }

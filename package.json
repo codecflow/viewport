@@ -3,12 +3,14 @@
   "type": "module",
   "scripts": {
     "test": "bun run --filter @simarena/viewport test",
-    "preview": "bun run --filter @simarena/preview dev"
+    "preview": "bun run --filter @simarena/preview dev",
+    "lint": "bun run --filter '*' lint",
+    "lint:fix": "bun run --filter '*' lint:fix",
+    "format": "bun run --filter '*' format",
+    "format:check": "bun run --filter '*' format:check"
   },
   "workspaces": [
     "client",
-    "preview",
-    "../format.nosync/schema",
-    "../format.nosync/typescript"
+    "preview"
   ]
 }

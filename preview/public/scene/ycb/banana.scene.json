@@ -15,11 +15,7 @@
     {
       "name": "Banana",
       "transform": {
-        "pos": [
-          0,
-          0,
-          0
-        ]
+        "pos": [0, 0, 0]
       },
       "geoms": [
         {
@@ -34,14 +30,10 @@
         }
       ],
       "visual": {
-        "groups": [
-          "vis"
-        ]
+        "groups": ["vis"]
       },
       "collider": {
-        "groups": [
-          "col"
-        ]
+        "groups": ["col"]
       },
       "physics": {
         "dynamic": true,

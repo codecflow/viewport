@@ -18,32 +18,18 @@
   "materials": [
     {
       "name": "M_dishwasher",
-      "rgba": [
-        0.75,
-        0.75,
-        0.78,
-        1
-      ]
+      "rgba": [0.75, 0.75, 0.78, 1]
     },
     {
       "name": "M_dishwasher_dark",
-      "rgba": [
-        0.15,
-        0.15,
-        0.18,
-        1
-      ]
+      "rgba": [0.15, 0.15, 0.18, 1]
     }
   ],
   "entities": [
     {
       "name": "dishwasher",
       "transform": {
-        "pos": [
-          0,
-          0,
-          0
-        ]
+        "pos": [0, 0, 0]
       },
       "physics": {
         "dynamic": false
@@ -54,148 +40,78 @@
           "mesh": "ktc_dishwasher",
           "material": "M_dishwasher",
           "group": "visual",
-          "rot": [
-            89.954374,
-            0,
-            0
-          ]
+          "rot": [89.954374, 0, 0]
         },
         {
           "type": "box",
-          "size": [
-            0.58,
-            0.62,
-            0.062
-          ],
+          "size": [0.58, 0.62, 0.062],
           "group": "collision",
-          "pos": [
-            0,
-            0.312,
-            0.756
-          ],
+          "pos": [0, 0.312, 0.756],
           "contype": 1,
           "conaffinity": 0
         },
         {
           "type": "box",
-          "size": [
-            0.58,
-            0.62,
-            0.11
-          ],
+          "size": [0.58, 0.62, 0.11],
           "group": "collision",
-          "pos": [
-            0,
-            0.312,
-            0.055
-          ],
+          "pos": [0, 0.312, 0.055],
           "contype": 1,
           "conaffinity": 0
         },
         {
           "type": "box",
-          "size": [
-            0.062,
-            0.62,
-            0.756
-          ],
+          "size": [0.062, 0.62, 0.756],
           "group": "collision",
-          "pos": [
-            0.26,
-            0.312,
-            0.378
-          ],
+          "pos": [0.26, 0.312, 0.378],
           "contype": 1,
           "conaffinity": 0
         },
         {
           "type": "box",
-          "size": [
-            0.062,
-            0.62,
-            0.756
-          ],
+          "size": [0.062, 0.62, 0.756],
           "group": "collision",
-          "pos": [
-            -0.26,
-            0.312,
-            0.378
-          ],
+          "pos": [-0.26, 0.312, 0.378],
           "contype": 1,
           "conaffinity": 0
         },
         {
           "type": "box",
-          "size": [
-            0.58,
-            0.142,
-            0.756
-          ],
+          "size": [0.58, 0.142, 0.756],
           "group": "collision",
-          "pos": [
-            0,
-            0.071,
-            0.378
-          ],
+          "pos": [0, 0.071, 0.378],
           "contype": 1,
           "conaffinity": 0
         }
       ],
       "collider": {
-        "groups": [
-          "collision"
-        ]
+        "groups": ["collision"]
       },
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       }
     },
     {
       "name": "top_rack",
       "transform": {
-        "pos": [
-          0,
-          0.375,
-          0.485
-        ]
+        "pos": [0, 0.375, 0.485]
       },
       "physics": {
         "dynamic": true,
         "mass": 2,
-        "centerOfMass": [
-          0,
-          0,
-          0
-        ],
-        "inertia": [
-          0.1,
-          0.1,
-          0.1
-        ]
+        "centerOfMass": [0, 0, 0],
+        "inertia": [0.1, 0.1, 0.1]
       },
       "joint": {
         "type": "slide",
-        "axis": [
-          0,
-          1,
-          0
-        ],
-        "range": [
-          0,
-          0.274
-        ],
+        "axis": [0, 1, 0],
+        "range": [0, 0.274],
         "damping": 0.01,
         "armature": 0.01,
         "frictionLoss": 0.01,
         "drive": {
           "mode": "position",
           "stiffness": 20,
-          "ctrlrange": [
-            0,
-            0.274
-          ]
+          "ctrlrange": [0, 0.274]
         }
       },
       "geoms": [
@@ -204,11 +120,7 @@
           "mesh": "ktc_dishwasher_rack",
           "material": "M_dishwasher",
           "group": "visual",
-          "rot": [
-            89.954374,
-            0,
-            0
-          ]
+          "rot": [89.954374, 0, 0]
         }
       ],
       "relation": {
@@ -218,47 +130,25 @@
     {
       "name": "door",
       "transform": {
-        "pos": [
-          0,
-          0.622,
-          0.05
-        ]
+        "pos": [0, 0.622, 0.05]
       },
       "physics": {
         "dynamic": true,
         "mass": 2,
-        "centerOfMass": [
-          0,
-          0,
-          0
-        ],
-        "inertia": [
-          0.1,
-          0.1,
-          0.1
-        ]
+        "centerOfMass": [0, 0, 0],
+        "inertia": [0.1, 0.1, 0.1]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          1,
-          0,
-          0
-        ],
-        "range": [
-          -1.5,
-          0
-        ],
+        "axis": [1, 0, 0],
+        "range": [-1.5, 0],
         "damping": 0.5,
         "armature": 0.01,
         "frictionLoss": 0.3,
         "drive": {
           "mode": "position",
           "stiffness": 20,
-          "ctrlrange": [
-            -1.5,
-            0
-          ]
+          "ctrlrange": [-1.5, 0]
         }
       },
       "geoms": [
@@ -267,26 +157,14 @@
           "mesh": "ktc_dishwasher_door",
           "material": "M_dishwasher",
           "group": "visual",
-          "rot": [
-            89.954374,
-            0,
-            0
-          ]
+          "rot": [89.954374, 0, 0]
         },
         {
           "type": "box",
-          "size": [
-            0.58,
-            0.02,
-            0.73
-          ],
+          "size": [0.58, 0.02, 0.73],
           "material": "M_dishwasher_dark",
           "group": "visual",
-          "pos": [
-            0,
-            0.025,
-            0.37
-          ]
+          "pos": [0, 0.025, 0.37]
         },
         {
           "type": "capsule",
@@ -294,16 +172,8 @@
           "height": 0.52,
           "material": "M_dishwasher_dark",
           "group": "visual",
-          "pos": [
-            0,
-            0.08,
-            0.625
-          ],
-          "rot": [
-            0,
-            89.954374,
-            0
-          ]
+          "pos": [0, 0.08, 0.625],
+          "rot": [0, 89.954374, 0]
         },
         {
           "type": "capsule",
@@ -311,16 +181,8 @@
           "height": 0.04,
           "material": "M_dishwasher_dark",
           "group": "visual",
-          "pos": [
-            0.26,
-            0.06,
-            0.625
-          ],
-          "rot": [
-            89.954374,
-            0,
-            0
-          ]
+          "pos": [0.26, 0.06, 0.625],
+          "rot": [89.954374, 0, 0]
         },
         {
           "type": "capsule",
@@ -328,43 +190,23 @@
           "height": 0.04,
           "material": "M_dishwasher_dark",
           "group": "visual",
-          "pos": [
-            -0.26,
-            0.06,
-            0.625
-          ],
-          "rot": [
-            89.954374,
-            0,
-            0
-          ]
+          "pos": [-0.26, 0.06, 0.625],
+          "rot": [89.954374, 0, 0]
         },
         {
           "type": "box",
-          "size": [
-            0.58,
-            0.042,
-            0.73
-          ],
+          "size": [0.58, 0.042, 0.73],
           "group": "collision",
-          "pos": [
-            0,
-            0.013,
-            0.37
-          ],
+          "pos": [0, 0.013, 0.37],
           "contype": 1,
           "conaffinity": 0
         }
       ],
       "collider": {
-        "groups": [
-          "collision"
-        ]
+        "groups": ["collision"]
       },
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "dishwasher"

@@ -2,9 +2,24 @@
   "name": "@simarena/viewport",
   "version": "0.0.1-alpha.0",
   "description": "SimArena viewport — Three.js rendering, body sync, camera, WebSocket streaming",
+  "keywords": [
+    "robotics",
+    "simarena",
+    "simulation",
+    "three.js",
+    "viewport",
+    "websocket"
+  ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/simarena/viewport"
+  },
+  "files": [
+    "src"
+  ],
   "type": "module",
-  "files": ["src"],
+  "main": "./src/index.ts",
   "exports": {
     ".": {
       "source": "./src/index.ts",
@@ -12,20 +27,20 @@
       "types": "./src/index.ts"
     }
   },
-  "main": "./src/index.ts",
   "scripts": {
-    "check": "tsc --noEmit"
-  },
-  "keywords": ["simarena", "viewport", "three.js", "robotics", "simulation", "websocket"],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/simarena/viewport"
+    "check": "tsc --noEmit",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
   },
   "dependencies": {
     "three": "^0.183.2"
   },
   "devDependencies": {
     "@types/three": "^0.183.1",
+    "oxfmt": "^0.49.0",
+    "oxlint": "^1.64.0",
     "typescript": "^6.0.2"
   }
 }

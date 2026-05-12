@@ -34,107 +34,39 @@
   "materials": [
     {
       "name": "metal",
-      "rgba": [
-        0.9,
-        0.95,
-        0.95,
-        1
-      ]
+      "rgba": [0.9, 0.95, 0.95, 1]
     },
     {
       "name": "black",
-      "rgba": [
-        0.1,
-        0.1,
-        0.1,
-        1
-      ]
+      "rgba": [0.1, 0.1, 0.1, 1]
     },
     {
       "name": "white",
-      "rgba": [
-        1,
-        1,
-        1,
-        1
-      ]
+      "rgba": [1, 1, 1, 1]
     },
     {
       "name": "gray",
-      "rgba": [
-        0.672,
-        0.692,
-        0.774,
-        1
-      ]
+      "rgba": [0.672, 0.692, 0.774, 1]
     }
   ],
   "task": {
     "keyframe_qpos": [
-      0,
-      0,
-      0.27,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0.9,
-      -1.8,
-      0,
-      0.9,
-      -1.8,
-      0,
-      0.9,
-      -1.8,
-      0,
-      0.9,
-      -1.8
+      0, 0, 0.27, 1, 0, 0, 0, 0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8
     ],
-    "keyframe_ctrl": [
-      0,
-      0.9,
-      -1.8,
-      0,
-      0.9,
-      -1.8,
-      0,
-      0.9,
-      -1.8,
-      0,
-      0.9,
-      -1.8
-    ]
+    "keyframe_ctrl": [0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8]
   },
   "entities": [
     {
       "name": "base",
       "transform": {
-        "pos": [
-          0,
-          0,
-          0.445
-        ]
+        "pos": [0, 0, 0.445]
       },
       "physics": {
         "dynamic": false,
         "mass": 6.921,
-        "centerOfMass": [
-          0.021112,
-          0,
-          -0.005366
-        ],
-        "inertia": [
-          0.107027,
-          0.0980771,
-          0.0244531
-        ],
-        "inertiaQuat": [
-          -0.000543471,
-          0.713435,
-          -0.00173769,
-          0.700719
-        ]
+        "centerOfMass": [0.021112, 0, -0.005366],
+        "inertia": [0.107027, 0.0980771, 0.0244531],
+        "inertiaQuat": [-0.000543471, 0.713435, -0.00173769, 0.700719]
       },
       "joint": {
         "type": "free"
@@ -154,11 +86,7 @@
         },
         {
           "type": "box",
-          "size": [
-            0.3762,
-            0.0935,
-            0.114
-          ],
+          "size": [0.3762, 0.0935, 0.114],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
@@ -167,11 +95,7 @@
           "type": "cylinder",
           "radius": 0.05,
           "height": 0.09,
-          "pos": [
-            0.285,
-            0,
-            0.01
-          ],
+          "pos": [0.285, 0, 0.01],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
@@ -179,76 +103,41 @@
         {
           "type": "sphere",
           "radius": 0.047,
-          "pos": [
-            0.293,
-            0,
-            -0.06
-          ],
+          "pos": [0.293, 0, -0.06],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
         }
       ],
       "collider": {
-        "groups": [
-          "collision"
-        ]
+        "groups": ["collision"]
       },
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       }
     },
     {
       "name": "FL_hip",
       "transform": {
-        "pos": [
-          0.1934,
-          0.0465,
-          0
-        ]
+        "pos": [0.1934, 0.0465, 0]
       },
       "physics": {
         "dynamic": true,
         "mass": 0.678,
-        "centerOfMass": [
-          -0.0054,
-          0.00194,
-          -0.000105
-        ],
-        "inertia": [
-          0.00088403,
-          0.000596003,
-          0.000479967
-        ],
-        "inertiaQuat": [
-          0.497014,
-          0.499245,
-          0.505462,
-          0.498237
-        ]
+        "centerOfMass": [-0.0054, 0.00194, -0.000105],
+        "inertia": [0.00088403, 0.000596003, 0.000479967],
+        "inertiaQuat": [0.497014, 0.499245, 0.505462, 0.498237]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          1,
-          0,
-          0
-        ],
-        "range": [
-          -1.0472,
-          1.0472
-        ],
+        "axis": [1, 0, 0],
+        "range": [-1.0472, 1.0472],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -23.7,
-            23.7
-          ]
+          "ctrlrange": [-23.7, 23.7]
         }
       },
       "geoms": [
@@ -266,9 +155,7 @@
         }
       ],
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "base"
@@ -277,52 +164,25 @@
     {
       "name": "FL_thigh",
       "transform": {
-        "pos": [
-          0,
-          0.0955,
-          0
-        ]
+        "pos": [0, 0.0955, 0]
       },
       "physics": {
         "dynamic": true,
         "mass": 1.152,
-        "centerOfMass": [
-          -0.00374,
-          -0.0223,
-          -0.0327
-        ],
-        "inertia": [
-          0.00594973,
-          0.00584149,
-          0.000878787
-        ],
-        "inertiaQuat": [
-          0.829533,
-          0.0847635,
-          -0.0200632,
-          0.551623
-        ]
+        "centerOfMass": [-0.00374, -0.0223, -0.0327],
+        "inertia": [0.00594973, 0.00584149, 0.000878787],
+        "inertiaQuat": [0.829533, 0.0847635, -0.0200632, 0.551623]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          0,
-          1,
-          0
-        ],
-        "range": [
-          -1.5708,
-          3.4907
-        ],
+        "axis": [0, 1, 0],
+        "range": [-1.5708, 3.4907],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -23.7,
-            23.7
-          ]
+          "ctrlrange": [-23.7, 23.7]
         }
       },
       "geoms": [
@@ -340,36 +200,19 @@
         },
         {
           "type": "box",
-          "size": [
-            0.213,
-            0.0245,
-            0.034
-          ],
-          "pos": [
-            0,
-            0,
-            -0.1065
-          ],
-          "quat": [
-            0.707107,
-            0,
-            0.707107,
-            0
-          ],
+          "size": [0.213, 0.0245, 0.034],
+          "pos": [0, 0, -0.1065],
+          "quat": [0.707107, 0, 0.707107, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
         }
       ],
       "collider": {
-        "groups": [
-          "collision"
-        ]
+        "groups": ["collision"]
       },
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "FL_hip"
@@ -378,52 +221,25 @@
     {
       "name": "FL_calf",
       "transform": {
-        "pos": [
-          0,
-          0,
-          -0.213
-        ]
+        "pos": [0, 0, -0.213]
       },
       "physics": {
         "dynamic": true,
         "mass": 0.241352,
-        "centerOfMass": [
-          0.00629595,
-          -0.000622121,
-          -0.141417
-        ],
-        "inertia": [
-          0.0014901,
-          0.00146356,
-          5.31397e-05
-        ],
-        "inertiaQuat": [
-          0.710672,
-          0.00154099,
-          -0.00450087,
-          0.703508
-        ]
+        "centerOfMass": [0.00629595, -0.000622121, -0.141417],
+        "inertia": [0.0014901, 0.00146356, 5.31397e-5],
+        "inertiaQuat": [0.710672, 0.00154099, -0.00450087, 0.703508]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          0,
-          1,
-          0
-        ],
-        "range": [
-          -2.7227,
-          -0.83776
-        ],
+        "axis": [0, 1, 0],
+        "range": [-2.7227, -0.83776],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -45.43,
-            45.43
-          ]
+          "ctrlrange": [-45.43, 45.43]
         }
       },
       "geoms": [
@@ -444,27 +260,14 @@
           "mesh": "foot",
           "material": "black",
           "group": "visual",
-          "pos": [
-            0,
-            0,
-            -0.213
-          ]
+          "pos": [0, 0, -0.213]
         },
         {
           "type": "cylinder",
           "radius": 0.012,
           "height": 0.12,
-          "pos": [
-            0.008,
-            0,
-            -0.06
-          ],
-          "quat": [
-            0.994493,
-            0,
-            -0.104807,
-            0
-          ],
+          "pos": [0.008, 0, -0.06],
+          "quat": [0.994493, 0, -0.104807, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
@@ -473,17 +276,8 @@
           "type": "cylinder",
           "radius": 0.011,
           "height": 0.065,
-          "pos": [
-            0.02,
-            0,
-            -0.148
-          ],
-          "quat": [
-            0.999688,
-            0,
-            0.0249974,
-            0
-          ],
+          "pos": [0.02, 0, -0.148],
+          "quat": [0.999688, 0, 0.0249974, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
@@ -491,25 +285,17 @@
         {
           "type": "sphere",
           "radius": 0.022,
-          "pos": [
-            -0.002,
-            0,
-            -0.213
-          ],
+          "pos": [-0.002, 0, -0.213],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
         }
       ],
       "collider": {
-        "groups": [
-          "collision"
-        ]
+        "groups": ["collision"]
       },
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "FL_thigh"
@@ -518,52 +304,25 @@
     {
       "name": "FR_hip",
       "transform": {
-        "pos": [
-          0.1934,
-          -0.0465,
-          0
-        ]
+        "pos": [0.1934, -0.0465, 0]
       },
       "physics": {
         "dynamic": true,
         "mass": 0.678,
-        "centerOfMass": [
-          -0.0054,
-          -0.00194,
-          -0.000105
-        ],
-        "inertia": [
-          0.00088403,
-          0.000596003,
-          0.000479967
-        ],
-        "inertiaQuat": [
-          0.498237,
-          0.505462,
-          0.499245,
-          0.497014
-        ]
+        "centerOfMass": [-0.0054, -0.00194, -0.000105],
+        "inertia": [0.00088403, 0.000596003, 0.000479967],
+        "inertiaQuat": [0.498237, 0.505462, 0.499245, 0.497014]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          1,
-          0,
-          0
-        ],
-        "range": [
-          -1.0472,
-          1.0472
-        ],
+        "axis": [1, 0, 0],
+        "range": [-1.0472, 1.0472],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -23.7,
-            23.7
-          ]
+          "ctrlrange": [-23.7, 23.7]
         }
       },
       "geoms": [
@@ -572,30 +331,18 @@
           "mesh": "hip",
           "material": "metal",
           "group": "visual",
-          "quat": [
-            0,
-            1,
-            0,
-            0
-          ]
+          "quat": [0, 1, 0, 0]
         },
         {
           "type": "mesh",
           "mesh": "hip",
           "material": "gray",
           "group": "visual",
-          "quat": [
-            0,
-            1,
-            0,
-            0
-          ]
+          "quat": [0, 1, 0, 0]
         }
       ],
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "base"
@@ -604,52 +351,25 @@
     {
       "name": "FR_thigh",
       "transform": {
-        "pos": [
-          0,
-          -0.0955,
-          0
-        ]
+        "pos": [0, -0.0955, 0]
       },
       "physics": {
         "dynamic": true,
         "mass": 1.152,
-        "centerOfMass": [
-          -0.00374,
-          0.0223,
-          -0.0327
-        ],
-        "inertia": [
-          0.00594973,
-          0.00584149,
-          0.000878787
-        ],
-        "inertiaQuat": [
-          0.551623,
-          -0.0200632,
-          0.0847635,
-          0.829533
-        ]
+        "centerOfMass": [-0.00374, 0.0223, -0.0327],
+        "inertia": [0.00594973, 0.00584149, 0.000878787],
+        "inertiaQuat": [0.551623, -0.0200632, 0.0847635, 0.829533]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          0,
-          1,
-          0
-        ],
-        "range": [
-          -1.5708,
-          3.4907
-        ],
+        "axis": [0, 1, 0],
+        "range": [-1.5708, 3.4907],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -23.7,
-            23.7
-          ]
+          "ctrlrange": [-23.7, 23.7]
         }
       },
       "geoms": [
@@ -667,36 +387,19 @@
         },
         {
           "type": "box",
-          "size": [
-            0.213,
-            0.0245,
-            0.034
-          ],
-          "pos": [
-            0,
-            0,
-            -0.1065
-          ],
-          "quat": [
-            0.707107,
-            0,
-            0.707107,
-            0
-          ],
+          "size": [0.213, 0.0245, 0.034],
+          "pos": [0, 0, -0.1065],
+          "quat": [0.707107, 0, 0.707107, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
         }
       ],
       "collider": {
-        "groups": [
-          "collision"
-        ]
+        "groups": ["collision"]
       },
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "FR_hip"
@@ -705,52 +408,25 @@
     {
       "name": "FR_calf",
       "transform": {
-        "pos": [
-          0,
-          0,
-          -0.213
-        ]
+        "pos": [0, 0, -0.213]
       },
       "physics": {
         "dynamic": true,
         "mass": 0.241352,
-        "centerOfMass": [
-          0.00629595,
-          0.000622121,
-          -0.141417
-        ],
-        "inertia": [
-          0.0014901,
-          0.00146356,
-          5.31397e-05
-        ],
-        "inertiaQuat": [
-          0.703508,
-          -0.00450087,
-          0.00154099,
-          0.710672
-        ]
+        "centerOfMass": [0.00629595, 0.000622121, -0.141417],
+        "inertia": [0.0014901, 0.00146356, 5.31397e-5],
+        "inertiaQuat": [0.703508, -0.00450087, 0.00154099, 0.710672]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          0,
-          1,
-          0
-        ],
-        "range": [
-          -2.7227,
-          -0.83776
-        ],
+        "axis": [0, 1, 0],
+        "range": [-2.7227, -0.83776],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -45.43,
-            45.43
-          ]
+          "ctrlrange": [-45.43, 45.43]
         }
       },
       "geoms": [
@@ -771,27 +447,14 @@
           "mesh": "foot",
           "material": "black",
           "group": "visual",
-          "pos": [
-            0,
-            0,
-            -0.213
-          ]
+          "pos": [0, 0, -0.213]
         },
         {
           "type": "cylinder",
           "radius": 0.013,
           "height": 0.12,
-          "pos": [
-            0.01,
-            0,
-            -0.06
-          ],
-          "quat": [
-            0.995004,
-            0,
-            -0.0998334,
-            0
-          ],
+          "pos": [0.01, 0, -0.06],
+          "quat": [0.995004, 0, -0.0998334, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
@@ -800,17 +463,8 @@
           "type": "cylinder",
           "radius": 0.011,
           "height": 0.065,
-          "pos": [
-            0.02,
-            0,
-            -0.148
-          ],
-          "quat": [
-            0.999688,
-            0,
-            0.0249974,
-            0
-          ],
+          "pos": [0.02, 0, -0.148],
+          "quat": [0.999688, 0, 0.0249974, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
@@ -818,25 +472,17 @@
         {
           "type": "sphere",
           "radius": 0.022,
-          "pos": [
-            -0.002,
-            0,
-            -0.213
-          ],
+          "pos": [-0.002, 0, -0.213],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
         }
       ],
       "collider": {
-        "groups": [
-          "collision"
-        ]
+        "groups": ["collision"]
       },
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "FR_thigh"
@@ -845,52 +491,25 @@
     {
       "name": "RL_hip",
       "transform": {
-        "pos": [
-          -0.1934,
-          0.0465,
-          0
-        ]
+        "pos": [-0.1934, 0.0465, 0]
       },
       "physics": {
         "dynamic": true,
         "mass": 0.678,
-        "centerOfMass": [
-          0.0054,
-          0.00194,
-          -0.000105
-        ],
-        "inertia": [
-          0.00088403,
-          0.000596003,
-          0.000479967
-        ],
-        "inertiaQuat": [
-          0.505462,
-          0.498237,
-          0.497014,
-          0.499245
-        ]
+        "centerOfMass": [0.0054, 0.00194, -0.000105],
+        "inertia": [0.00088403, 0.000596003, 0.000479967],
+        "inertiaQuat": [0.505462, 0.498237, 0.497014, 0.499245]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          1,
-          0,
-          0
-        ],
-        "range": [
-          -1.0472,
-          1.0472
-        ],
+        "axis": [1, 0, 0],
+        "range": [-1.0472, 1.0472],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -23.7,
-            23.7
-          ]
+          "ctrlrange": [-23.7, 23.7]
         }
       },
       "geoms": [
@@ -899,30 +518,18 @@
           "mesh": "hip",
           "material": "metal",
           "group": "visual",
-          "quat": [
-            0,
-            0,
-            1,
-            0
-          ]
+          "quat": [0, 0, 1, 0]
         },
         {
           "type": "mesh",
           "mesh": "hip",
           "material": "gray",
           "group": "visual",
-          "quat": [
-            0,
-            0,
-            1,
-            0
-          ]
+          "quat": [0, 0, 1, 0]
         }
       ],
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "base"
@@ -931,52 +538,25 @@
     {
       "name": "RL_thigh",
       "transform": {
-        "pos": [
-          0,
-          0.0955,
-          0
-        ]
+        "pos": [0, 0.0955, 0]
       },
       "physics": {
         "dynamic": true,
         "mass": 1.152,
-        "centerOfMass": [
-          -0.00374,
-          -0.0223,
-          -0.0327
-        ],
-        "inertia": [
-          0.00594973,
-          0.00584149,
-          0.000878787
-        ],
-        "inertiaQuat": [
-          0.829533,
-          0.0847635,
-          -0.0200632,
-          0.551623
-        ]
+        "centerOfMass": [-0.00374, -0.0223, -0.0327],
+        "inertia": [0.00594973, 0.00584149, 0.000878787],
+        "inertiaQuat": [0.829533, 0.0847635, -0.0200632, 0.551623]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          0,
-          1,
-          0
-        ],
-        "range": [
-          -0.5236,
-          4.5379
-        ],
+        "axis": [0, 1, 0],
+        "range": [-0.5236, 4.5379],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -23.7,
-            23.7
-          ]
+          "ctrlrange": [-23.7, 23.7]
         }
       },
       "geoms": [
@@ -994,36 +574,19 @@
         },
         {
           "type": "box",
-          "size": [
-            0.213,
-            0.0245,
-            0.034
-          ],
-          "pos": [
-            0,
-            0,
-            -0.1065
-          ],
-          "quat": [
-            0.707107,
-            0,
-            0.707107,
-            0
-          ],
+          "size": [0.213, 0.0245, 0.034],
+          "pos": [0, 0, -0.1065],
+          "quat": [0.707107, 0, 0.707107, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
         }
       ],
       "collider": {
-        "groups": [
-          "collision"
-        ]
+        "groups": ["collision"]
       },
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "RL_hip"
@@ -1032,52 +595,25 @@
     {
       "name": "RL_calf",
       "transform": {
-        "pos": [
-          0,
-          0,
-          -0.213
-        ]
+        "pos": [0, 0, -0.213]
       },
       "physics": {
         "dynamic": true,
         "mass": 0.241352,
-        "centerOfMass": [
-          0.00629595,
-          -0.000622121,
-          -0.141417
-        ],
-        "inertia": [
-          0.0014901,
-          0.00146356,
-          5.31397e-05
-        ],
-        "inertiaQuat": [
-          0.710672,
-          0.00154099,
-          -0.00450087,
-          0.703508
-        ]
+        "centerOfMass": [0.00629595, -0.000622121, -0.141417],
+        "inertia": [0.0014901, 0.00146356, 5.31397e-5],
+        "inertiaQuat": [0.710672, 0.00154099, -0.00450087, 0.703508]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          0,
-          1,
-          0
-        ],
-        "range": [
-          -2.7227,
-          -0.83776
-        ],
+        "axis": [0, 1, 0],
+        "range": [-2.7227, -0.83776],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -45.43,
-            45.43
-          ]
+          "ctrlrange": [-45.43, 45.43]
         }
       },
       "geoms": [
@@ -1098,27 +634,14 @@
           "mesh": "foot",
           "material": "black",
           "group": "visual",
-          "pos": [
-            0,
-            0,
-            -0.213
-          ]
+          "pos": [0, 0, -0.213]
         },
         {
           "type": "cylinder",
           "radius": 0.013,
           "height": 0.12,
-          "pos": [
-            0.01,
-            0,
-            -0.06
-          ],
-          "quat": [
-            0.995004,
-            0,
-            -0.0998334,
-            0
-          ],
+          "pos": [0.01, 0, -0.06],
+          "quat": [0.995004, 0, -0.0998334, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
@@ -1127,17 +650,8 @@
           "type": "cylinder",
           "radius": 0.011,
           "height": 0.065,
-          "pos": [
-            0.02,
-            0,
-            -0.148
-          ],
-          "quat": [
-            0.999688,
-            0,
-            0.0249974,
-            0
-          ],
+          "pos": [0.02, 0, -0.148],
+          "quat": [0.999688, 0, 0.0249974, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
@@ -1145,25 +659,17 @@
         {
           "type": "sphere",
           "radius": 0.022,
-          "pos": [
-            -0.002,
-            0,
-            -0.213
-          ],
+          "pos": [-0.002, 0, -0.213],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
         }
       ],
       "collider": {
-        "groups": [
-          "collision"
-        ]
+        "groups": ["collision"]
       },
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "RL_thigh"
@@ -1172,52 +678,25 @@
     {
       "name": "RR_hip",
       "transform": {
-        "pos": [
-          -0.1934,
-          -0.0465,
-          0
-        ]
+        "pos": [-0.1934, -0.0465, 0]
       },
       "physics": {
         "dynamic": true,
         "mass": 0.678,
-        "centerOfMass": [
-          0.0054,
-          -0.00194,
-          -0.000105
-        ],
-        "inertia": [
-          0.00088403,
-          0.000596003,
-          0.000479967
-        ],
-        "inertiaQuat": [
-          0.499245,
-          0.497014,
-          0.498237,
-          0.505462
-        ]
+        "centerOfMass": [0.0054, -0.00194, -0.000105],
+        "inertia": [0.00088403, 0.000596003, 0.000479967],
+        "inertiaQuat": [0.499245, 0.497014, 0.498237, 0.505462]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          1,
-          0,
-          0
-        ],
-        "range": [
-          -1.0472,
-          1.0472
-        ],
+        "axis": [1, 0, 0],
+        "range": [-1.0472, 1.0472],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -23.7,
-            23.7
-          ]
+          "ctrlrange": [-23.7, 23.7]
         }
       },
       "geoms": [
@@ -1226,30 +705,18 @@
           "mesh": "hip",
           "material": "metal",
           "group": "visual",
-          "quat": [
-            0,
-            0,
-            0,
-            -1
-          ]
+          "quat": [0, 0, 0, -1]
         },
         {
           "type": "mesh",
           "mesh": "hip",
           "material": "gray",
           "group": "visual",
-          "quat": [
-            0,
-            0,
-            0,
-            -1
-          ]
+          "quat": [0, 0, 0, -1]
         }
       ],
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "base"
@@ -1258,52 +725,25 @@
     {
       "name": "RR_thigh",
       "transform": {
-        "pos": [
-          0,
-          -0.0955,
-          0
-        ]
+        "pos": [0, -0.0955, 0]
       },
       "physics": {
         "dynamic": true,
         "mass": 1.152,
-        "centerOfMass": [
-          -0.00374,
-          0.0223,
-          -0.0327
-        ],
-        "inertia": [
-          0.00594973,
-          0.00584149,
-          0.000878787
-        ],
-        "inertiaQuat": [
-          0.551623,
-          -0.0200632,
-          0.0847635,
-          0.829533
-        ]
+        "centerOfMass": [-0.00374, 0.0223, -0.0327],
+        "inertia": [0.00594973, 0.00584149, 0.000878787],
+        "inertiaQuat": [0.551623, -0.0200632, 0.0847635, 0.829533]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          0,
-          1,
-          0
-        ],
-        "range": [
-          -0.5236,
-          4.5379
-        ],
+        "axis": [0, 1, 0],
+        "range": [-0.5236, 4.5379],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -23.7,
-            23.7
-          ]
+          "ctrlrange": [-23.7, 23.7]
         }
       },
       "geoms": [
@@ -1321,36 +761,19 @@
         },
         {
           "type": "box",
-          "size": [
-            0.213,
-            0.0245,
-            0.034
-          ],
-          "pos": [
-            0,
-            0,
-            -0.1065
-          ],
-          "quat": [
-            0.707107,
-            0,
-            0.707107,
-            0
-          ],
+          "size": [0.213, 0.0245, 0.034],
+          "pos": [0, 0, -0.1065],
+          "quat": [0.707107, 0, 0.707107, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
         }
       ],
       "collider": {
-        "groups": [
-          "collision"
-        ]
+        "groups": ["collision"]
       },
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "RR_hip"
@@ -1359,52 +782,25 @@
     {
       "name": "RR_calf",
       "transform": {
-        "pos": [
-          0,
-          0,
-          -0.213
-        ]
+        "pos": [0, 0, -0.213]
       },
       "physics": {
         "dynamic": true,
         "mass": 0.241352,
-        "centerOfMass": [
-          0.00629595,
-          0.000622121,
-          -0.141417
-        ],
-        "inertia": [
-          0.0014901,
-          0.00146356,
-          5.31397e-05
-        ],
-        "inertiaQuat": [
-          0.703508,
-          -0.00450087,
-          0.00154099,
-          0.710672
-        ]
+        "centerOfMass": [0.00629595, 0.000622121, -0.141417],
+        "inertia": [0.0014901, 0.00146356, 5.31397e-5],
+        "inertiaQuat": [0.703508, -0.00450087, 0.00154099, 0.710672]
       },
       "joint": {
         "type": "hinge",
-        "axis": [
-          0,
-          1,
-          0
-        ],
-        "range": [
-          -2.7227,
-          -0.83776
-        ],
+        "axis": [0, 1, 0],
+        "range": [-2.7227, -0.83776],
         "damping": 0.1,
         "armature": 0.01,
         "frictionLoss": 0.2,
         "drive": {
           "mode": "torque",
-          "ctrlrange": [
-            -45.43,
-            45.43
-          ]
+          "ctrlrange": [-45.43, 45.43]
         }
       },
       "geoms": [
@@ -1425,27 +821,14 @@
           "mesh": "foot",
           "material": "black",
           "group": "visual",
-          "pos": [
-            0,
-            0,
-            -0.213
-          ]
+          "pos": [0, 0, -0.213]
         },
         {
           "type": "cylinder",
           "radius": 0.013,
           "height": 0.12,
-          "pos": [
-            0.01,
-            0,
-            -0.06
-          ],
-          "quat": [
-            0.995004,
-            0,
-            -0.0998334,
-            0
-          ],
+          "pos": [0.01, 0, -0.06],
+          "quat": [0.995004, 0, -0.0998334, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
@@ -1454,17 +837,8 @@
           "type": "cylinder",
           "radius": 0.011,
           "height": 0.065,
-          "pos": [
-            0.02,
-            0,
-            -0.148
-          ],
-          "quat": [
-            0.999688,
-            0,
-            0.0249974,
-            0
-          ],
+          "pos": [0.02, 0, -0.148],
+          "quat": [0.999688, 0, 0.0249974, 0],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
@@ -1472,25 +846,17 @@
         {
           "type": "sphere",
           "radius": 0.022,
-          "pos": [
-            -0.002,
-            0,
-            -0.213
-          ],
+          "pos": [-0.002, 0, -0.213],
           "group": "collision",
           "contype": 1,
           "conaffinity": 1
         }
       ],
       "collider": {
-        "groups": [
-          "collision"
-        ]
+        "groups": ["collision"]
       },
       "visual": {
-        "groups": [
-          "visual"
-        ]
+        "groups": ["visual"]
       },
       "relation": {
         "parent": "RR_thigh"

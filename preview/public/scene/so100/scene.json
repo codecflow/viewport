@@ -105,15 +105,31 @@
     }
   ],
   "actuators": [
-    { "name": "Rotation",   "joint": "Rotation",   "range": [-2.2, 2.2],         "type": "position", "kp": 50 },
-    { "name": "Pitch",      "joint": "Pitch",      "range": [-3.14158, 0.2],     "type": "position", "kp": 50 },
-    { "name": "Elbow",      "joint": "Elbow",      "range": [0, 3.14158],        "type": "position", "kp": 50 },
-    { "name": "Wrist_Pitch","joint": "Wrist_Pitch","range": [-2, 1.8],           "type": "position", "kp": 50 },
-    { "name": "Wrist_Roll", "joint": "Wrist_Roll", "range": [-3.14158, 3.14158], "type": "position", "kp": 50 },
-    { "name": "Jaw",        "joint": "Jaw",        "range": [-0.2, 2],           "type": "position", "kp": 50 }
+    { "name": "Rotation", "joint": "Rotation", "range": [-2.2, 2.2], "type": "position", "kp": 50 },
+    { "name": "Pitch", "joint": "Pitch", "range": [-3.14158, 0.2], "type": "position", "kp": 50 },
+    { "name": "Elbow", "joint": "Elbow", "range": [0, 3.14158], "type": "position", "kp": 50 },
+    {
+      "name": "Wrist_Pitch",
+      "joint": "Wrist_Pitch",
+      "range": [-2, 1.8],
+      "type": "position",
+      "kp": 50
+    },
+    {
+      "name": "Wrist_Roll",
+      "joint": "Wrist_Roll",
+      "range": [-3.14158, 3.14158],
+      "type": "position",
+      "kp": 50
+    },
+    { "name": "Jaw", "joint": "Jaw", "range": [-0.2, 2], "type": "position", "kp": 50 }
   ],
   "cameras": [
-    { "name": "front",    "pos": { "x": 1.5, "y": 1.0, "z": 1.5 }, "target": { "x": 0, "y": 0, "z": 0.5 } }
+    {
+      "name": "front",
+      "pos": { "x": 1.5, "y": 1.0, "z": 1.5 },
+      "target": { "x": 0, "y": 0, "z": 0.5 }
+    }
   ],
   "physics": {
     "xmlFile": "/scene/so100/scene.xml",

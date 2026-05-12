@@ -4,8 +4,8 @@
   "meshes": [
     { "name": "banana_vis", "file": "/scene/ycb/banana/textured.obj" },
     { "name": "banana_col", "file": "/scene/ycb/banana/mesh.stl" },
-    { "name": "plate_vis",  "file": "/scene/ycb/plate/textured.obj" },
-    { "name": "plate_col",  "file": "/scene/ycb/plate/mesh.stl"  }
+    { "name": "plate_vis", "file": "/scene/ycb/plate/textured.obj" },
+    { "name": "plate_col", "file": "/scene/ycb/plate/mesh.stl" }
   ],
   "scene": [
     {
@@ -16,12 +16,10 @@
     {
       "name": "Table",
       "transform": { "pos": [0.3, 0, 0.21] },
-      "geoms": [
-        { "type": "box", "size": [0.5, 0.35, 0.02], "color": "#8B7355", "group": "col" }
-      ],
-      "visual":   { "groups": ["col"] },
+      "geoms": [{ "type": "box", "size": [0.5, 0.35, 0.02], "color": "#8B7355", "group": "col" }],
+      "visual": { "groups": ["col"] },
       "collider": { "groups": ["col"] },
-      "physics":  {}
+      "physics": {}
     },
     {
       "name": "Banana",
@@ -30,15 +28,15 @@
         { "type": "mesh", "mesh": "banana_vis", "group": "vis" },
         { "type": "mesh", "mesh": "banana_col", "group": "col" }
       ],
-      "visual":   { "groups": ["vis"] },
+      "visual": { "groups": ["vis"] },
       "collider": { "groups": ["col"] },
-      "physics":  { "dynamic": true, "mass": 0.12 },
-      "joint":    { "type": "free" },
+      "physics": { "dynamic": true, "mass": 0.12 },
+      "joint": { "type": "free" },
       "scripts": [
         {
           "name": "reach",
           "params": [{ "name": "ee", "type": "entity", "label": "End-effector body" }],
-          "props":  { "ee": "Moving_Jaw" },
+          "props": { "ee": "Moving_Jaw" },
           "code": "\ndef step(ctx, self):\n    ee = self.props.get('ee') or ctx.state.ee or 'gripper'\n    d = ctx.dist(str(ee), self.id)\n    val = max(0.0, 1.0 - d)\n    ctx.out.reward += val\n    ctx.out.info[self.id + ':reach'] = val\n"
         },
         {
@@ -52,34 +50,41 @@
         },
         {
           "name": "lift",
-          "params": [{ "name": "threshold", "type": "number", "default": 0.03, "label": "Height threshold (m)" }],
-          "props":  { "threshold": 0.03 },
+          "params": [
+            {
+              "name": "threshold",
+              "type": "number",
+              "default": 0.03,
+              "label": "Height threshold (m)"
+            }
+          ],
+          "props": { "threshold": 0.03 },
           "code": "\nbase_z = None\n\ndef reset(ctx, self):\n    global base_z\n    base_z = ctx.height(self.id)\n\ndef step(ctx, self):\n    global base_z\n    threshold = self.props.get('threshold', 0.03)\n    if base_z is None:\n        base_z = ctx.height(self.id)\n    val = 1.0 if (ctx.height(self.id) - base_z) > threshold else 0.0\n    ctx.out.reward += val\n    ctx.out.info[self.id + ':lift'] = val\n"
         },
         {
           "name": "place",
           "params": [{ "name": "target", "type": "entity", "label": "Target entity" }],
-          "props":  { "target": "Plate" },
+          "props": { "target": "Plate" },
           "code": "\ndef step(ctx, self):\n    target = self.props.get('target')\n    if not target:\n        return\n    val = 1.0 if ctx.contact(self.id, target) else 0.0\n    ctx.out.reward += val\n    ctx.out.info[self.id + ':place'] = val\n"
         },
         {
           "name": "placed",
           "params": [{ "name": "target", "type": "entity", "label": "Target entity" }],
-          "props":  { "target": "Plate" },
+          "props": { "target": "Plate" },
           "code": "\ndef step(ctx, self):\n    target = self.props.get('target')\n    if not target:\n        return\n    touching = ctx.contact(self.id, target)\n    if touching:\n        ctx.out.success = True\n    ctx.out.info[self.id + ':placed'] = 1.0 if touching else 0.0\n"
         }
       ]
     },
     {
       "name": "Plate",
-      "transform": { "pos": [0.30, 0.13, 0.235] },
+      "transform": { "pos": [0.3, 0.13, 0.235] },
       "geoms": [
         { "type": "mesh", "mesh": "plate_vis", "group": "vis" },
         { "type": "mesh", "mesh": "plate_col", "group": "col" }
       ],
-      "visual":   { "groups": ["vis"] },
+      "visual": { "groups": ["vis"] },
       "collider": { "groups": ["col"] },
-      "physics":  {}
+      "physics": {}
     }
   ],
   "task": {
